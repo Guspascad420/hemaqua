@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "982720574324",
+    "project_id": "hemaqua-f3776",
+    "storage_bucket": "hemaqua-f3776.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982720574324:android:49193b18d82da6bed4b221",
+        "android_client_info": {
+          "package_name": "com.example.hematologi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTPqWLklw-olYmlgRYmBnrhYB2gtE11mQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
