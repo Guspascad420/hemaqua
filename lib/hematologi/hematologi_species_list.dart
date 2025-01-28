@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hematologi/hematologi_species_cart.dart';
 import 'package:hematologi/static_grid.dart';
 import 'package:hematologi/cards/fish_card2.dart';
 import '../database/database_service.dart';
+import '../models/species.dart';
 
 
 class HematologiSpeciesList extends StatefulWidget {
@@ -16,14 +18,53 @@ class HematologiSpeciesList extends StatefulWidget {
 class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
 
   DatabaseService service = DatabaseService();
-  late Future<List<Map<String, dynamic>>> futureFishList;
+  late Future<List<Species>> futureFishList;
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  List<Species> _speciesInCart = [];
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     futureFishList = service.retrieveFishes();
   }
 
+  void _showSnackBar(BuildContext context, String textContent, MaterialColor backgroundColor) {
+    SnackBar snackBar = SnackBar(
+      content: Text(textContent),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _addSpeciesToCart(Species species) {
+    setState(() {
+      if (_speciesInCart.isEmpty) {
+        service.addSpeciesToCart(species, auth.currentUser!.uid, 'hematologi_species_in_cart');
+        _speciesInCart.add(species);
+        _showSnackBar(context, 'Berhasil menambahkan spesies', Colors.blue);
+      } else {
+        _showSnackBar(context, 'Ikan sudah ditambahkan', Colors.red);
+      }
+    });
+  }
+
+  void _removeSpeciesFromCart(Species species) {
+    setState(() {
+      service.removeSpeciesFromCart(species, auth.currentUser!.uid, 'hematologi_species_in_cart');
+      _speciesInCart.remove(species);
+    });
+    _showSnackBar(context, 'Berhasil menghapus spesies', Colors.blue);
+  }
+
+  Future<void> _loadUserData() async {
+    Map<String, dynamic> userData = await service.retrieveUserData(auth.currentUser!.uid);
+    setState(() {
+      _speciesInCart.addAll(userData["hematologi_species_in_cart"]);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +113,8 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
               child: IconButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const HematologiSpeciesCart())
+                      MaterialPageRoute(builder: (context) => HematologiSpeciesCart(speciesInCart: _speciesInCart,
+                        removeSpeciesFromCart: _removeSpeciesFromCart,))
                   );
                 },
                 icon: const Icon(Icons.shopping_cart, color: Colors.blue),
@@ -101,7 +143,7 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
                 gap: 20,
                 children: [
                   for(var fish in fishList)
-                    speciesCard(context, fish),
+                    speciesCard(context, fish, _addSpeciesToCart),
                 ]
             )
           );

@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/bottom_nav_bar.dart';
+import 'package:hematologi/database/database_service.dart';
 import 'package:hematologi/documentary_card.dart';
 import 'package:hematologi/favorite/favorite_page.dart';
 import 'package:hematologi/cards/fish_card.dart';
@@ -16,14 +18,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  DatabaseService service = DatabaseService();
+  String _username = '';
+  Map<String, dynamic> _user = {};
+  bool _isLoading = true;
+  late Future<Map<String, dynamic>> futureUserData;
+
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
-    loadImage();
+    _loadImage();
+    futureUserData = service.retrieveUserData(auth.currentUser!.uid);
+    futureUserData.then((value) => {
+      setState(() {
+        _user = value;
+        _username = value["username"];
+        debugPrint('aaahh');
+        debugPrint(_username);
+        _isLoading = false;
+      })
+    });
   }
 
-  Future<void> loadImage() async {
+  Future<void> _loadImage() async {
     try {
       // Get the download URL
       String downloadURL = await FirebaseStorage.instance
@@ -41,7 +60,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4FBFF),
-      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 0),
+      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 0, user: _isLoading ? {} : _user,),
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -56,12 +75,25 @@ class _HomePageState extends State<HomePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Halo, User!',
-                          style: GoogleFonts.poppins(
-                              fontSize: 21,
-                              color: const Color(0xFF3B82F6),
-                              fontWeight: FontWeight.bold
-                          )),
+                      FutureBuilder(
+                          future: futureUserData,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text('Halo, ${snapshot.data!["username"]}!',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 21,
+                                      color: const Color(0xFF3B82F6),
+                                      fontWeight: FontWeight.bold
+                                  ));
+                            }
+                            return Text('Halo, !',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 21,
+                                    color: const Color(0xFF3B82F6),
+                                    fontWeight: FontWeight.bold
+                                ));
+                          }
+                      ),
                       Row(
                         children: [
                           const Icon(Icons.location_on, color: Colors.blue,),
@@ -169,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                             )
                           ],
                         ),
-                        Image.asset('images/betta_fish.png')
+                        Image.asset('images/sun_rise.png', scale: 3.5)
                       ],
                     ),
                   ],
@@ -248,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                           Column(
                             children: [
                               Image.asset('images/rectangle_3.png', scale: 2.3),
-                              Text('Halfmoon',
+                              Text('Ikan',
                                   style: GoogleFonts.poppins(
                                       fontSize: 15,
                                       color: Colors.grey[700],
@@ -259,8 +291,8 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(width: 20),
                           Column(
                             children: [
-                              Image.asset('images/rectangle_15.png', scale: 2.3),
-                              Text('Crown Tail',
+                              Image.asset('images/image_25.png', scale: 2.3),
+                              Text('Moluska',
                                   style: GoogleFonts.poppins(
                                       fontSize: 15,
                                       color: Colors.grey[700],
@@ -271,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(width: 20),
                           Column(
                             children: [
-                              Image.asset('images/rectangle_20.png', scale: 2.3),
+                              Image.asset('images/image_32.png', scale: 2.3),
                               Text('Sarawak',
                                   style: GoogleFonts.poppins(
                                       fontSize: 15,
@@ -286,16 +318,6 @@ class _HomePageState extends State<HomePage> {
                   )
               ),
               const SizedBox(height: 15),
-              Text('Tentang Kami',
-                  style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      color: const Color(0xFF3B82F6),
-                      fontWeight: FontWeight.bold
-                  )),
-              const SizedBox(height: 15),
-              documentaryCard('images/sampling-water.png', 'Aplikasi Kami',
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-                      'Nisl quam vulputate enim ultricies maecenas sed...'),
             ],
           ),
         )

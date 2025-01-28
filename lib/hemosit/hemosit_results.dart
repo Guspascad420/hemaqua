@@ -1,31 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/cards/fish_card3.dart';
-import 'package:hematologi/hematologi/hematologi_parameters.dart';
-import 'package:hematologi/models/species.dart';
+import 'package:hematologi/calculations/calculation_result.dart';
 
-class HematologiSpeciesCart extends StatefulWidget {
-  final List<Species> speciesInCart;
-  final void Function(Species) removeSpeciesFromCart;
+import '../parameter_box.dart';
 
-  const HematologiSpeciesCart({super.key, required this.speciesInCart,
-    required this.removeSpeciesFromCart});
+class HemositResults extends StatelessWidget {
+  final Map<String, double> calculationResults;
 
-  @override
-  State<HematologiSpeciesCart> createState() => _HematologiSpeciesCartState();
-}
-
-class _HematologiSpeciesCartState extends State<HematologiSpeciesCart> {
+  const HemositResults({super.key, required this.calculationResults});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: widget.speciesInCart.isEmpty ? null : GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const HematologiParameters())
-            );
-          },
+      bottomNavigationBar: GestureDetector(
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 22),
             color: Colors.blue,
@@ -59,25 +46,42 @@ class _HematologiSpeciesCartState extends State<HematologiSpeciesCart> {
               icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
             )
         ),
-        title: Text('Keranjang',
+        title: Text('Hasil',
             style: GoogleFonts.poppins(
                 fontSize: 21,
                 color: Colors.blue,
                 fontWeight: FontWeight.w600
             )),
       ),
-      body: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              widget.speciesInCart.isEmpty ? const SizedBox()
-                  : Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: fishCard3(widget.speciesInCart[0], widget.removeSpeciesFromCart)
-                  )
-            ],
-          )
-      )
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
+          parameterBox('THC', () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) =>
+                    CalculationResult(result: calculationResults['thc']!))
+            );
+          }),
+          parameterBox('Hyalin', () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) =>
+                    CalculationResult(result: calculationResults['hyalin']!))
+            );
+          }),
+          parameterBox('Granular', () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) =>
+                    CalculationResult(result: calculationResults['granular']!))
+            );
+          }),
+          parameterBox('Semi Granular', () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) =>
+                    CalculationResult(result: calculationResults['semi_granular']!))
+            );
+          }),
+        ],
+      ),
     );
   }
 

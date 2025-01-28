@@ -44,6 +44,7 @@ dependencies:
   cloud_firestore: ^4.14.0
   google_maps_flutter: ^2.5.0
   geolocator: ^10.1.0
+  firebase_auth: ^4.16.0
 
 
 dev_dependencies:
@@ -121,6 +122,17 @@ flutter:
     - images/globulins.png
     - images/squid.png
     - images/logo_blue.png
+    - images/sun_rise.png
+    - images/leukosit_formula.png
+    - images/leukositdiff_formula.png
+    - images/hematokrit_formula.png
+    - images/thc_formula.png
+    - images/hyalin_formula.png
+    - images/granular_formula.png
+    - images/semi_granular_formula.png
+    - images/saved_data.png
+    - images/image_25.png
+    - images/image_32.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

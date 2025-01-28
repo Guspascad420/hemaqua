@@ -1,8 +1,15 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/calculations/eritrosit_calculation.dart';
+import 'package:hematologi/calculations/hematokrit_calculation.dart';
+import 'package:hematologi/calculations/hemoglobin_calculation.dart';
+import 'package:hematologi/calculations/leukosit_calculation.dart';
+import 'package:hematologi/calculations/leukositdiff_calculation.dart';
+import 'package:hematologi/calculations/mikronuklei_calculation.dart';
 import 'package:hematologi/cards/fish_card3.dart';
 import 'package:hematologi/data_saved.dart';
+import 'package:hematologi/hematologi/hematologi_results.dart';
 import 'package:hematologi/parameter_box.dart';
 
 class HematologiParameters extends StatefulWidget {
@@ -13,37 +20,48 @@ class HematologiParameters extends StatefulWidget {
 }
 
 class _HematologiParametersState extends State<HematologiParameters> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
 
-  double turns = 0.0;
-  bool isEritrositChecked = true;
-  bool isLeukositChecked = false;
-  bool isHematokritChecked = false;
-  bool isHemoglobinChecked = false;
-  bool isMikronukleiChecked = false;
-  bool isNeutrofilChecked = false;
-  bool isEusinofilChecked = false;
-  bool isBasofilChecked = false;
-  bool isLimfositChecked = false;
-  bool isMonositChecked = false;
-  bool isGranulositChecked = false;
-  bool isNonGranulositChecked = false;
+  double leukosit = 0;
+  double eritrosit = 0;
+  double hematokrit = 0;
+  double diffLeukosit = 0;
+  double mikronuklei = 0;
+  double hemoglobin = 0;
 
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-      upperBound: 0.5,
-    );
+  void calculateLeukosit(double n) {
+    setState(() {
+      leukosit = n * 20 / 0.4;
+    });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
+  void calculateMikronuklei(double micronucleatedCells, double totalCells) {
+    setState(() {
+      mikronuklei = (micronucleatedCells / totalCells) * 100;
+    });
+  }
+
+  void calculateEritrosit(double n) {
+    setState(() {
+      eritrosit = n * 20 / 0.4;
+    });
+  }
+
+  void calculateHematokrit(double rbcVolume, double totalBlood) {
+    setState(() {
+     hematokrit = (rbcVolume / totalBlood) * 100;
+    });
+  }
+
+  void calculateHemoglobin(double sampleAbsorbance, double standardAbsorbance, double standardConcentration) {
+    setState(() {
+      hemoglobin = (sampleAbsorbance / standardAbsorbance) * standardConcentration;
+    });
+  }
+
+  void calculateDiffLeukosit(double cellCount, double totalLeukosit) {
+    setState(() {
+      diffLeukosit = (cellCount / totalLeukosit) * 100;
+    });
   }
 
   @override
@@ -51,8 +69,16 @@ class _HematologiParametersState extends State<HematologiParameters> with Single
     return Scaffold(
         bottomNavigationBar: GestureDetector(
             onTap: () {
+              Map<String, double> calculationResults = {
+                'leukosit': leukosit,
+                'eritrosit': eritrosit,
+                'hematokrit': hematokrit,
+                'diffLeukosit': diffLeukosit,
+                'mikronuklei': mikronuklei,
+                'hemoglobin': hemoglobin,
+              };
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const DataSaved())
+                  MaterialPageRoute(builder: (context) => HematologiResults(calculationResults: calculationResults))
               );
             },
             child: Container(
@@ -99,157 +125,47 @@ class _HematologiParametersState extends State<HematologiParameters> with Single
           child: ExpandableNotifier(
               child: Column(
                 children: [
-                  parameterBox('Eritrosit', isEritrositChecked, (bool? value) {
-                    setState(() {
-                      isEritrositChecked = value!;
-                      debugPrint('$isEritrositChecked');
-                    });
+                  parameterBox('Eritrosit', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            EritrositCalculation(calculationFunc: calculateEritrosit))
+                    );
                   }),
-                  parameterBox('Leukosit', isLeukositChecked, (bool? value) {
-                    setState(() {
-                      isLeukositChecked = value!;
-                    });
+                  parameterBox('Leukosit', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            LeukositCalculation(calculationFunc: calculateLeukosit))
+                    );
                   }),
-                  parameterBox('Hematokrit', isHematokritChecked, (bool? value) {
-                    setState(() {
-                      isHematokritChecked = value!;
-                    });
+                  parameterBox('Hematokrit', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            HematokritCalculation(calculationFunc: calculateHematokrit))
+                    );
                   }),
-                  parameterBox('Hemoglobin', isHemoglobinChecked, (bool? value) {
-                    setState(() {
-                      isHemoglobinChecked = value!;
-                    });
+                  parameterBox('Hemoglobin', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            HemoglobinCalculation(calculationFunc: calculateHemoglobin))
+                    );
                   }),
-                  parameterBox('Mikronuklei', isMikronukleiChecked, (bool? value) {
-                    setState(() {
-                      isMikronukleiChecked = value!;
-                    });
+                  parameterBox('Mikronuklei', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            MikronukleiCalculation(calculationFunc: calculateMikronuklei))
+                    );
                   }),
-                  Container(
-                    margin: const EdgeInsets.only(right: 20, left: 20, top: 20),
-                    padding: const EdgeInsets.only(left: 15, right: 10, top: 7, bottom: 7),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF60A5FA).withOpacity(0.3),
-                          blurRadius: 3,
-                          offset: const Offset(0, 3), // Shadow position
-                        ),
-                      ],
-                    ),
-                    child: ExpandablePanel(
-                        theme: const ExpandableThemeData(
-                            iconColor: Colors.blue,
-                            iconSize: 45
-                        ),
-                        header: Container(
-                          margin: const EdgeInsets.only(top: 12),
-                          child: Text('Diferensial Leukosit',
-                              style: GoogleFonts.poppins(
-                                  fontSize: 21,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500
-                              )),
-                        ),
-                        collapsed: Column(
-                          children: [
-                            GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () {
-                                setState(() {
-                                  isNonGranulositChecked = !isNonGranulositChecked;
-                                });
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('Non Granulosit',
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 18,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500
-                                      )),
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 5),
-                                    child: Checkbox(value: isNonGranulositChecked,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            isNonGranulositChecked = value!;
-                                          });
-                                        }, activeColor: Colors.blue)
-                                  )
-                                ],
-                              )
-                            ),
-                            GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  setState(() {
-                                    isGranulositChecked = !isGranulositChecked;
-                                  });
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Granulosit',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 18,
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w500
-                                        )),
-                                    Container(
-                                        margin: const EdgeInsets.only(right: 5),
-                                        child: Checkbox(value: isGranulositChecked,
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                isGranulositChecked = value!;
-                                              });
-                                            }, activeColor: Colors.blue)
-                                    )
-                                  ],
-                                )
-                            )
-                          ]
-                        ),
-                        expanded: SizedBox()
-                    )
-                  ),
-                  // Column(
-                  //   children: [
-                  //     if (!isExpanded)...[
-                  //       parameterBox('Non Granulosit', false, (bool? value) {
-                  //
-                  //       }),
-                  //     ]
-                  //   ],
-                  // ),
-                  parameterBox('Neutrofil', isNeutrofilChecked, (bool? value) {
-                    setState(() {
-                      isNeutrofilChecked = value!;
-                    });
+                  parameterBox('Diferensial Leukosit', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            LeukositDiffCalculation(calculationFunc: calculateDiffLeukosit))
+                    );
                   }),
-                  parameterBox('Eusinofil', isEusinofilChecked, (bool? value) {
-                    setState(() {
-                      isEusinofilChecked = value!;
-                    });
-                  }),
-                  parameterBox('Basofil', isBasofilChecked, (bool? value) {
-                    setState(() {
-                      isBasofilChecked = value!;
-                    });
-                  }),
-                  parameterBox('Limfosit', isLimfositChecked, (bool? value) {
-                    setState(() {
-                      isLimfositChecked = value!;
-                    });
-                  }),
-                  parameterBox('Monosit', isMonositChecked, (bool? value) {
-                    setState(() {
-                      isMonositChecked = value!;
-                    });
-                  }),
+                  parameterBox('Neutrofil', () {}),
+                  parameterBox('Eusinofil', () {}),
+                  parameterBox('Basofil', () {}),
+                  parameterBox('Limfosit', () {}),
+                  parameterBox('Monosit', () {}),
                   const SizedBox(height: 30)
                 ],
               ),

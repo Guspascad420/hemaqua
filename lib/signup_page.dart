@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/home/home_page.dart';
 import 'package:hematologi/login_page.dart';
+
+import 'database/database_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -14,6 +18,46 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _usernameTextController = TextEditingController();
+
+  DatabaseService service = DatabaseService();
+
+  final validEmail = RegExp(
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+  );
+  final validPassword = RegExp(r"^(?=.*[0-9]).{8,}$");
+  bool _isEmailValid = true;
+  bool _isPasswordValid = true;
+
+  bool _isButtonActive = false;
+  bool _isLoading = false;
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Add listeners to text controllers
+    _emailTextController.addListener(_updateButtonState);
+    _usernameTextController.addListener(_updateButtonState);
+    _passwordTextController.addListener(_updateButtonState);
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers to prevent memory leaks
+    _emailTextController.dispose();
+    _passwordTextController.dispose();
+    _usernameTextController.dispose();
+    super.dispose();
+  }
+
+  void _updateButtonState() {
+    setState(() {
+      _isButtonActive = _emailTextController.text.isNotEmpty &&
+          _passwordTextController.text.isNotEmpty && _usernameTextController.text.isNotEmpty;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +187,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     child: TextField(
                       controller: _passwordTextController,
+                      obscureText: true,
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -171,14 +216,56 @@ class _SignUpPageState extends State<SignUpPage> {
                         height: 60,
                         margin: const EdgeInsets.symmetric(horizontal: 20),
                         child: ElevatedButton(
-                            onPressed: (){},
+                            onPressed: _isButtonActive ? () {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              validEmail.hasMatch(_emailTextController.text)
+                                  ? setState(() {
+                                _isEmailValid = true;
+                              })
+                                  : setState(() {
+                                _isEmailValid = false;
+                              });
+                              setState(() {
+                                _isPasswordValid =
+                                validPassword.hasMatch(_passwordTextController.text)
+                                    ? true : false;
+                              });
+                              if (_isPasswordValid && _isEmailValid) {
+                                auth
+                                    .createUserWithEmailAndPassword(
+                                    email: _emailTextController.text,
+                                    password: _passwordTextController.text)
+                                    .then((value) {
+                                  var user = {
+                                    'username': _usernameTextController.text,
+                                    'email': _emailTextController.text,
+                                    'hematologi_species_in_cart': [],
+                                    'hemosit_species_in_cart': []
+                                  };
+                                  service.createNewUser(user, auth.currentUser!.uid);
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const HomePage()),
+                                          (route) => false);
+                                });
+                              }
+                            } : null,
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blue,
                                 shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(10))
                                 )
                             ),
-                            child: Text('Register',
+                            child: _isLoading ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                            : Text('Register',
                                 style: GoogleFonts.poppins(
                                     fontSize: 18,
                                     color: Colors.white,

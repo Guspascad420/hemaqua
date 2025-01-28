@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/cards/blood_card.dart';
+import 'package:hematologi/models/species.dart';
 
 import '../cards/fish_card2.dart';
 import '../database/database_service.dart';
@@ -19,7 +20,7 @@ class _GalleryPageState extends State<GalleryPage> {
 
   String searchText = '';
   DatabaseService service = DatabaseService();
-  late Future<List<Map<String, dynamic>>> futureSpeciesList;
+  late Future<List<Species>> futureSpeciesList;
 
   @override
   void initState() {
@@ -111,7 +112,7 @@ class _GalleryPageState extends State<GalleryPage> {
                     gap: 20,
                     children: [
                       for(var species in speciesList)
-                        speciesCard(context, species)
+                        speciesCard(context, species, (Species) {})
                     ]
                 )
             );

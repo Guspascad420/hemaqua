@@ -28,7 +28,7 @@ class _AddDataState extends State<AddData> {
                 fontWeight: FontWeight.w600
             )),
       ),
-      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 1),
+      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 1, user: {},),
       body: Column(
         children: [
           GestureDetector(

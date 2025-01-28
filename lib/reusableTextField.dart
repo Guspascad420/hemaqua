@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Widget reusableTextField(String label, [TextInputType? keyboardType]) {
+Widget reusableTextField(String label, TextEditingController controller, [TextInputType? keyboardType, bool? isPasswordType]) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -15,14 +15,14 @@ Widget reusableTextField(String label, [TextInputType? keyboardType]) {
             )),
       ),
       TextField(
-        // controller: _passwordTextController,
+        controller: controller,
         style: GoogleFonts.inter(
             fontSize: 15,
             fontWeight: FontWeight.w500,
             color: Colors.black
         ),
+        obscureText: isPasswordType == true ?  true : false,
         keyboardType: keyboardType ?? TextInputType.text,
-        obscureText: true,
         enableSuggestions: false,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,

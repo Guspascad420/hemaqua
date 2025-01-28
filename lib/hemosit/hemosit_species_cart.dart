@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/cards/fish_card3.dart';
-import 'package:hematologi/hematologi/hematologi_parameters.dart';
 import 'package:hematologi/hemosit/hemosit_parameters.dart';
 
+import '../models/species.dart';
+
 class HemositSpeciesCart extends StatefulWidget {
-  const HemositSpeciesCart({super.key});
+  final List<Species> speciesInCart;
+  final void Function(Species) removeSpeciesFromCart;
+
+  const HemositSpeciesCart({super.key, required this.speciesInCart, required this.removeSpeciesFromCart});
 
   @override
   State<HemositSpeciesCart> createState() => _HemositSpeciesCartState();
@@ -15,7 +19,7 @@ class _HemositSpeciesCartState extends State<HemositSpeciesCart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: GestureDetector(
+        bottomNavigationBar: widget.speciesInCart.isEmpty ? null : GestureDetector(
             onTap: () {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const HemositParameters())
@@ -65,7 +69,7 @@ class _HemositSpeciesCartState extends State<HemositSpeciesCart> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                fishCard3('images/fish2.png')
+                widget.speciesInCart.isEmpty ? const SizedBox() : fishCard3(widget.speciesInCart[0], widget.removeSpeciesFromCart)
               ],
             )
         )

@@ -11,6 +11,10 @@ class HematologiAddSpecies extends StatefulWidget {
 }
 
 class _HematologiAddSpeciesState extends State<HematologiAddSpecies> {
+  TextEditingController localName = TextEditingController();
+  TextEditingController latinName = TextEditingController();
+  TextEditingController location = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +50,7 @@ class _HematologiAddSpeciesState extends State<HematologiAddSpecies> {
                         icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
                       )
                   ),
-                  Text('Tambah Spesies',
+                  Text('Stasiun 1',
                       style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontSize: 21,
@@ -81,21 +85,12 @@ class _HematologiAddSpeciesState extends State<HematologiAddSpecies> {
                           ),
                         ),
                         const SizedBox(height: 30),
-                        Center(
-                          child: Text('Station 1',
-                              style: GoogleFonts.poppins(
-                                  color: Colors.blue,
-                                  fontSize: 23,
-                                  fontWeight: FontWeight.w600
-                              )),
-                        ),
-                        const SizedBox(height: 30),
-                        reusableTextField('Nama'),
-                        reusableTextField('Spesies'),
-                        reusableTextField('Lokasi'),
+                        reusableTextField('Nama Lokal', localName),
+                        reusableTextField('Nama Latin', latinName),
+                        reusableTextField('Lokasi', location),
                         Container(
                           margin: const EdgeInsets.only(left: 5, bottom: 3),
-                          child: Text('Deskripsi',
+                          child: Text('Kunci Identifikasi (Opsional)',
                               style: GoogleFonts.poppins(
                                   color: Colors.grey[600],
                                   fontSize: 15,

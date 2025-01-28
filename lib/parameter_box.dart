@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Widget parameterBox(String title, bool isChecked, void Function(bool?) onChanged) {
+Widget parameterBox(String title, void Function() onNavigate) {
   return GestureDetector(
-    onTap: () {
-      onChanged(!isChecked);
-    },
+    onTap: onNavigate,
     child: Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -29,9 +27,16 @@ Widget parameterBox(String title, bool isChecked, void Function(bool?) onChanged
                   color: Colors.grey,
                   fontWeight: FontWeight.w500
               )),
-          Checkbox(value: isChecked, onChanged: onChanged, activeColor: Colors.blue,)
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              color: Colors.blue
+            ),
+            child: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+          )
         ],
-      ),
+      )
     )
   );
 }

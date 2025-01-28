@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/models/species.dart';
 
 class SpeciesDetails extends StatefulWidget {
-  const SpeciesDetails({super.key, required this.species});
+  const SpeciesDetails({super.key, required this.species, required this.addSpeciesToCart});
 
-  final Map<String, dynamic> species;
+  final void Function(Species) addSpeciesToCart;
+  final Species species;
 
   @override
   State<SpeciesDetails> createState() => _SpeciesDetailsState();
 }
 
 class _SpeciesDetailsState extends State<SpeciesDetails> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +30,7 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
             child: IconButton(
               padding: const EdgeInsets.only(left: 7),
               onPressed: () {
-
+                Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
             )
@@ -41,7 +44,7 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
       ),
       bottomNavigationBar: GestureDetector(
           onTap: () {
-
+            widget.addSpeciesToCart(widget.species);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 22),
@@ -69,7 +72,7 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                     children: [
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 30),
-                        child: Image.network(widget.species['image_url']),
+                        child: Image.network(widget.species.image_url),
                       ),
                       Expanded(
                         child: Container(
@@ -95,13 +98,13 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-                              Text(widget.species['name'],
+                              Text(widget.species.name,
                                   style: GoogleFonts.poppins(
                                       color: Colors.blue,
                                       fontSize: 27,
                                       fontWeight: FontWeight.w500
                                   )),
-                              Text(widget.species['latin_name'],
+                              Text(widget.species.latin_name,
                                   style: GoogleFonts.poppins(
                                       color: Colors.grey,
                                       fontSize: 18,
@@ -128,7 +131,7 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                                       fontWeight: FontWeight.w500
                                   )),
                               const SizedBox(height: 5),
-                              Text(widget.species['description'],
+                              Text(widget.species.description,
                                   style: GoogleFonts.poppins(
                                     color: Colors.grey,
                                     fontSize: 15,

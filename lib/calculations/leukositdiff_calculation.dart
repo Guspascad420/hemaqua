@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/reusableTextField.dart';
+
+class LeukositDiffCalculation extends StatefulWidget {
+  final void Function(double, double) calculationFunc;
+  const LeukositDiffCalculation({super.key, required this.calculationFunc});
+
+  @override
+  State<StatefulWidget> createState() => _LeukositDiffCalculationState();
+}
+
+class _LeukositDiffCalculationState extends State<LeukositDiffCalculation> {
+  TextEditingController cellCount = TextEditingController();
+  TextEditingController totalLeukosit = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: const Color(0xFFF4FBFF),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF4FBFF),
+          centerTitle: true,
+          leading: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF60A5FA).withOpacity(0.3),
+                    blurRadius: 3,
+                    offset: const Offset(0, 3), // Shadow position
+                  ),
+                ],
+              ),
+              margin: const EdgeInsets.only(left: 20),
+              child: IconButton(
+                padding: const EdgeInsets.only(left: 7),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
+              )
+          ),
+          title: Text("Differensial Leukosit",
+              style: GoogleFonts.poppins(
+                  fontSize: 21,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600
+              )),
+        ),
+        body: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 30),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      color: Colors.white
+                  ),
+                  child: Image.asset('images/leukositdiff_formula.png', scale: 2.5)
+                ),
+                reusableTextField('Jumlah jenis sel', cellCount, TextInputType.number),
+                const SizedBox(height: 10),
+                reusableTextField('Jumlah total leukosit', totalLeukosit, TextInputType.number),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                    onPressed: () {
+                      widget.calculationFunc(double.parse(cellCount.text), double.parse(totalLeukosit.text));
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        )
+                    ),
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                        child: Text('Simpan',
+                            style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500
+                            ))
+                    )
+                )
+              ],
+            )
+        )
+    );
+  }
+
+}

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hemosit/hemosit_species_cart.dart';
@@ -5,9 +6,11 @@ import 'package:hematologi/static_grid.dart';
 import 'package:hematologi/cards/fish_card2.dart';
 
 import '../database/database_service.dart';
+import '../models/species.dart';
 
 
 class HemositSpeciesList extends StatefulWidget {
+
   const HemositSpeciesList({super.key});
 
   @override
@@ -17,12 +20,52 @@ class HemositSpeciesList extends StatefulWidget {
 class _HemositSpeciesListState extends State<HemositSpeciesList> {
 
   DatabaseService service = DatabaseService();
-  late Future<List<Map<String, dynamic>>> futureMolluscslist;
+  late Future<List<Species>> futureMolluscslist;
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  List<Species> _speciesInCart = [];
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     futureMolluscslist = service.retrieveMolluscs();
+  }
+
+  void _showSnackBar(BuildContext context, String textContent, MaterialColor backgroundColor) {
+    SnackBar snackBar = SnackBar(
+      content: Text(textContent),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _addSpeciesToCart(Species species) {
+    setState(() {
+      if (_speciesInCart.isEmpty) {
+        service.addSpeciesToCart(species, auth.currentUser!.uid, 'hemosit_species_in_cart');
+        _speciesInCart.add(species);
+        _showSnackBar(context, 'Berhasil menambahkan spesies', Colors.blue);
+      } else {
+        _showSnackBar(context, 'Ikan sudah ditambahkan', Colors.red);
+      }
+    });
+  }
+
+  void _removeSpeciesFromCart(Species species) {
+    setState(() {
+      service.removeSpeciesFromCart(species, auth.currentUser!.uid, 'hematologi_species_in_cart');
+      _speciesInCart.remove(species);
+    });
+    _showSnackBar(context, 'Berhasil menghapus spesies', Colors.blue);
+  }
+
+  Future<void> _loadUserData() async {
+    Map<String, dynamic> userData = await service.retrieveUserData(auth.currentUser!.uid);
+    setState(() {
+      _speciesInCart.addAll(userData["hemosit_species_in_cart"]);
+    });
   }
 
   @override
@@ -72,7 +115,8 @@ class _HemositSpeciesListState extends State<HemositSpeciesList> {
               child: IconButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const HemositSpeciesCart())
+                      MaterialPageRoute(builder: (context) => HemositSpeciesCart(speciesInCart: _speciesInCart,
+                        removeSpeciesFromCart: _removeSpeciesFromCart,))
                   );
                 },
                 icon: const Icon(Icons.shopping_cart, color: Colors.blue),
@@ -101,7 +145,7 @@ class _HemositSpeciesListState extends State<HemositSpeciesList> {
                     gap: 20,
                     children: [
                       for(var molluscs in molluscsList)
-                        speciesCard(context, molluscs),
+                        speciesCard(context, molluscs, _addSpeciesToCart),
                     ]
                 )
             );

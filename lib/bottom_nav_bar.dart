@@ -8,8 +8,9 @@ import 'home/home_page.dart';
 class BottomNavBar extends StatelessWidget {
   final BuildContext context;
   final int currentIndex;
+  final Map<String, dynamic> user;
 
-  const BottomNavBar({super.key, required this.context, required this.currentIndex});
+  const BottomNavBar({super.key, required this.context, required this.currentIndex, required this.user});
 
   void onItemTapped(int index) {
     if (index == 0) {
@@ -27,7 +28,7 @@ class BottomNavBar extends StatelessWidget {
     } else if (index == 2) {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-              builder: (context) => const ProfilePage()
+              builder: (context) => ProfilePage(user: user)
           )
       );
     }

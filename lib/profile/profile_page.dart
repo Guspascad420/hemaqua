@@ -6,7 +6,9 @@ import 'package:hematologi/profile/edit_profile.dart';
 import 'package:hematologi/profile/help_center.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final Map<String, dynamic> user;
+
+  const ProfilePage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class ProfilePage extends StatelessWidget {
                 fontWeight: FontWeight.w600
             )),
       ),
-      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 2),
+      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 2, user: {},),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -53,13 +55,13 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Text('Username',
+            Text(user["username"],
                 style: GoogleFonts.poppins(
                     fontSize: 20,
                     color: Colors.blue,
                     fontWeight: FontWeight.w600
                 )),
-            Text('User@gmail.com',
+            Text(user["email"],
                 style: GoogleFonts.poppins(
                   fontSize: 15,
                 )),
