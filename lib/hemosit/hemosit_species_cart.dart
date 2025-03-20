@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/cards/fish_card3.dart';
+import 'package:hematologi/cards/species_card3.dart';
 import 'package:hematologi/hemosit/hemosit_parameters.dart';
 
 import '../models/species.dart';
 
 class HemositSpeciesCart extends StatefulWidget {
   final List<Species> speciesInCart;
+  final int station;
   final void Function(Species) removeSpeciesFromCart;
 
-  const HemositSpeciesCart({super.key, required this.speciesInCart, required this.removeSpeciesFromCart});
+  const HemositSpeciesCart({super.key, required this.speciesInCart,
+    required this.removeSpeciesFromCart, required this.station});
 
   @override
   State<HemositSpeciesCart> createState() => _HemositSpeciesCartState();
@@ -22,7 +24,9 @@ class _HemositSpeciesCartState extends State<HemositSpeciesCart> {
         bottomNavigationBar: widget.speciesInCart.isEmpty ? null : GestureDetector(
             onTap: () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HemositParameters())
+                  MaterialPageRoute(builder: (context) => HemositParameters(
+                      species: widget.speciesInCart[0], station: widget.station
+                  ))
               );
             },
             child: Container(
@@ -69,7 +73,27 @@ class _HemositSpeciesCartState extends State<HemositSpeciesCart> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                widget.speciesInCart.isEmpty ? const SizedBox() : fishCard3(widget.speciesInCart[0], widget.removeSpeciesFromCart)
+                widget.speciesInCart.isEmpty
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 120),
+                          Image.asset('images/group_42310.png', scale: 2.5,),
+                          Text('Keranjang kosong',
+                              style: GoogleFonts.poppins(
+                                  fontSize: 21,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w600
+                              )),
+                          Text('Keranjang Anda kosong. Mulailah menambahkan data!',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500
+                              )),
+                        ],
+                    )
+                    : speciesCard3(widget.speciesInCart[0], widget.station, widget.removeSpeciesFromCart)
               ],
             )
         )

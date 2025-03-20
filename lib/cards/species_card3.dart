@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/species.dart';
 
-Widget fishCard3(Species species, void Function(Species) removeSpeciesFromCart) {
+Widget speciesCard3(Species species, int station, void Function(Species) removeSpeciesFromCart) {
   return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(20)),
     child: Dismissible(
@@ -34,35 +34,41 @@ Widget fishCard3(Species species, void Function(Species) removeSpeciesFromCart) 
                 child: Image.network(species.image_url, scale: 2.5),
               ),
               const SizedBox(width: 15),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(species.name,
-                      style: GoogleFonts.poppins(
-                          color: Colors.blue,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500
-                      )),
-                  Text(species.latin_name,
-                      style: GoogleFonts.poppins(
-                          color: Colors.grey,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500
-                      )),
-                  const SizedBox(height: 25),
-                  Row(
+              Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.location_on, color: Colors.blue, size: 30,),
-                      const SizedBox(width: 4),
-                      Text('Location',
+                      Text(species.name,
                           style: GoogleFonts.poppins(
-                              color: Colors.grey,
-                              fontSize: 14,
+                              color: Colors.blue,
+                              fontSize: 20,
                               fontWeight: FontWeight.w500
                           )),
+                      const SizedBox(height: 4),
+                      Text(species.latin_name,
+                          style: GoogleFonts.poppins(
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500
+                          ),
+                        softWrap: true,  // Ensure wrapping is enabled
+                        maxLines: 2,     // Optional: Limit to 2 lines
+                        overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 25),
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on, color: Colors.blue, size: 30,),
+                          const SizedBox(width: 4),
+                          Text('Stasiun $station',
+                              style: GoogleFonts.poppins(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500
+                              )),
+                        ],
+                      ),
                     ],
-                  ),
-                ],
+                  )
               )
             ],
           ),

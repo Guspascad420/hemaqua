@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hematologi/hematologi_add_species.dart';
+import 'package:hematologi/hematologi/hematologi_species_list.dart';
 import 'package:hematologi/station_selection.dart';
 
 class HematologiProfile extends StatelessWidget {
@@ -15,7 +16,9 @@ class HematologiProfile extends StatelessWidget {
         child: ElevatedButton(
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const StationSelection(nextWidget: HematologiAddSpecies()))
+                MaterialPageRoute(builder: (context) =>
+                    StationSelection(nextWidget: (int station) =>
+                        HematologiSpeciesList(station: station,)))
               );
             },
             style: ElevatedButton.styleFrom(
@@ -39,7 +42,7 @@ class HematologiProfile extends StatelessWidget {
         children: [
           const SizedBox(height: 80),
           Center(
-            child: Image.asset('images/image_782.png', scale: 2.3),
+            child: Image.asset('images/group_42311.png', scale: 2.3),
           ),
           const SizedBox(height: 20),
           Text('Profil Hematologi',
@@ -48,19 +51,19 @@ class HematologiProfile extends StatelessWidget {
                   color: Colors.blue,
                   fontWeight: FontWeight.w600
               )),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                    fontSize: 17,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w500
-                ))
+          Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Text("Analisis komposisi darah pada ikan untuk mendeteksi"
+                  " kondisi kesehatan ikan dan kualitas lingkungan perairan",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                      fontSize: 17,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500
+                  ))
           )
         ],
-      ),
+      )
     );
   }
 

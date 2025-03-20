@@ -7,13 +7,15 @@ import 'package:hematologi/calculations/hemoglobin_calculation.dart';
 import 'package:hematologi/calculations/leukosit_calculation.dart';
 import 'package:hematologi/calculations/leukositdiff_calculation.dart';
 import 'package:hematologi/calculations/mikronuklei_calculation.dart';
-import 'package:hematologi/cards/fish_card3.dart';
-import 'package:hematologi/data_saved.dart';
 import 'package:hematologi/hematologi/hematologi_results.dart';
+import 'package:hematologi/models/species.dart';
 import 'package:hematologi/parameter_box.dart';
 
 class HematologiParameters extends StatefulWidget {
-  const HematologiParameters({super.key});
+  final Species species;
+  final int station;
+
+  const HematologiParameters({super.key, required this.species, required this.station});
 
   @override
   State<HematologiParameters> createState() => _HematologiParametersState();
@@ -24,7 +26,9 @@ class _HematologiParametersState extends State<HematologiParameters> with Single
   double leukosit = 0;
   double eritrosit = 0;
   double hematokrit = 0;
-  double diffLeukosit = 0;
+  double limfosit = 0;
+  double monosit = 0;
+  double neutrofil = 0;
   double mikronuklei = 0;
   double hemoglobin = 0;
 
@@ -58,9 +62,21 @@ class _HematologiParametersState extends State<HematologiParameters> with Single
     });
   }
 
-  void calculateDiffLeukosit(double cellCount, double totalLeukosit) {
+  void calculateLimfosit(double cellCount, double totalLimfosit) {
     setState(() {
-      diffLeukosit = (cellCount / totalLeukosit) * 100;
+      limfosit = (cellCount / totalLimfosit) * 100;
+    });
+  }
+
+  void calculateMonosit(double cellCount, double totalMonosit) {
+    setState(() {
+      monosit = (cellCount / totalMonosit) * 100;
+    });
+  }
+
+  void calculateNeutrofil(double cellCount, double totalNeutrofil) {
+    setState(() {
+      neutrofil = (cellCount / totalNeutrofil) * 100;
     });
   }
 
@@ -70,15 +86,18 @@ class _HematologiParametersState extends State<HematologiParameters> with Single
         bottomNavigationBar: GestureDetector(
             onTap: () {
               Map<String, double> calculationResults = {
-                'leukosit': leukosit,
-                'eritrosit': eritrosit,
-                'hematokrit': hematokrit,
-                'diffLeukosit': diffLeukosit,
-                'mikronuklei': mikronuklei,
-                'hemoglobin': hemoglobin,
+                'Leukosit': leukosit,
+                'Eritrosit': eritrosit,
+                'Hematokrit': hematokrit,
+                'Limfosit': limfosit,
+                'Monosit': monosit,
+                'Neutrofil': neutrofil,
+                'Mikronuklei': mikronuklei,
+                'Hemoglobin': hemoglobin,
               };
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => HematologiResults(calculationResults: calculationResults))
+                  MaterialPageRoute(builder: (context) => HematologiResults(species: widget.species,
+                      calculationResults: calculationResults, station: widget.station, showBottomNav: true,))
               );
             },
             child: Container(
@@ -155,17 +174,24 @@ class _HematologiParametersState extends State<HematologiParameters> with Single
                             MikronukleiCalculation(calculationFunc: calculateMikronuklei))
                     );
                   }),
-                  parameterBox('Diferensial Leukosit', () {
+                  parameterBox('Limfosit', () {
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) =>
-                            LeukositDiffCalculation(calculationFunc: calculateDiffLeukosit))
+                            LeukositDiffCalculation(calculationFunc: calculateLimfosit))
                     );
                   }),
-                  parameterBox('Neutrofil', () {}),
-                  parameterBox('Eusinofil', () {}),
-                  parameterBox('Basofil', () {}),
-                  parameterBox('Limfosit', () {}),
-                  parameterBox('Monosit', () {}),
+                  parameterBox('Monosit', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            LeukositDiffCalculation(calculationFunc: calculateMonosit))
+                    );
+                  }),
+                  parameterBox('Neutrofil', () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            LeukositDiffCalculation(calculationFunc: calculateNeutrofil))
+                    );
+                  }),
                   const SizedBox(height: 30)
                 ],
               ),

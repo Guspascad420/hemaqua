@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/models/species.dart';
 import 'package:hematologi/static_grid.dart';
-
-import '../cards/fish_card.dart';
+import '../cards/species_card.dart';
 
 class FavoritePage extends StatelessWidget {
-  const FavoritePage({super.key});
+  final List<Map<String, dynamic>> favoriteSpecies;
+  final void Function(Map<String, dynamic>) removeSpeciesFromFavorite;
+
+  const FavoritePage({super.key, required this.favoriteSpecies,
+    required this.removeSpeciesFromFavorite});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class FavoritePage extends StatelessWidget {
             },
             icon: const Icon(Icons.arrow_back, color: Colors.blue)
         ),
-        title: Text('Favorite',
+        title: Text('Favorit',
             style: GoogleFonts.poppins(
                 fontSize: 21,
                 color: Colors.blue,
@@ -28,16 +32,39 @@ class FavoritePage extends StatelessWidget {
             )),
       ),
       body: SingleChildScrollView(
-        child: StaticGrid(
-            gap: 20,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            children: [
-              fishCard('images/clown_fish.png', 'Fish Name', 'Species Name'),
-              fishCard('images/betta_transparent.png', 'Fish Name', 'Species Name'),
-              fishCard('images/purple_squid.png', 'Mollusca Name', 'Species Name'),
-              fishCard('images/conch_shell.png', 'Mollusca Name', 'Species Name'),
-            ]
-        ),
+        child: favoriteSpecies.isEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 120),
+                  Image.asset('images/empty_fav.png', scale: 2.5,),
+                  const SizedBox(height: 20),
+                  Text('Tidak ada favorit',
+                      style: GoogleFonts.poppins(
+                          fontSize: 21,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w600
+                      )),
+                  Text('Anda belum punya apa pun di daftar Anda. Tidak ada kata terlambat untuk mengubahnya',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500
+                      )),
+                ],
+              )
+            : StaticGrid(
+                gap: 20,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                children: [
+                  for (var species in favoriteSpecies)
+                    speciesCard(context, Species(name: species["name"],
+                        latin_name: species["latin_name"],
+                        type: species["type"],
+                        image_url: species["image_url"],
+                        description: species["description"]), removeSpeciesFromFavorite),
+                ]
+            )
       )
     );
   }

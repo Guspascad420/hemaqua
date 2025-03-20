@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/reusableTextField.dart';
+import 'package:hematologi/utils/reusableTextField.dart';
 
 class EritrositCalculation extends StatefulWidget {
   final void Function(double) calculationFunc;
@@ -62,7 +62,7 @@ class _EritrositCalculationState extends State<EritrositCalculation> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.asset('images/leukosit_formula.png', scale: 2.5),
+                      Image.asset('images/eritrosit_formula.png', scale: 2.5),
                       Text('Keterangan',
                           style: GoogleFonts.poppins(
                               fontSize: 16,

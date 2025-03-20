@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/profile/member_details.dart';
+import 'package:hematologi/hemaqua_team.dart';
 
 class AboutUs extends StatelessWidget {
   const AboutUs({super.key});
@@ -12,7 +12,7 @@ class AboutUs extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFFEFF6FF),
         centerTitle: true,
-        title: Text('About Us',
+        title: Text('Tentang Kami',
             style: GoogleFonts.poppins(
                 fontSize: 21,
                 color: Colors.blue,
@@ -33,7 +33,7 @@ class AboutUs extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Text('About Our App',
+                  Text('Tentang aplikasi kami',
                       style: GoogleFonts.poppins(
                           fontSize: 23,
                           color: Colors.white,
@@ -51,7 +51,7 @@ class AboutUs extends StatelessWidget {
                           color: Colors.white
                       )),
                   const SizedBox(height: 35),
-                  Text('Why Our App',
+                  Text('Mengapa aplikasi kami?',
                       style: GoogleFonts.poppins(
                           fontSize: 23,
                           color: Colors.white,
@@ -80,7 +80,7 @@ class AboutUs extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Text('Visions',
+                  Text('Visi',
                       style: GoogleFonts.poppins(
                           fontSize: 23,
                           color: Colors.blue,
@@ -97,7 +97,7 @@ class AboutUs extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                       )),
                   const SizedBox(height: 35),
-                  Text('Missions',
+                  Text('Misi',
                       style: GoogleFonts.poppins(
                           fontSize: 23,
                           color: Colors.blue,
@@ -114,7 +114,7 @@ class AboutUs extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       )),
                   const SizedBox(height: 35),
-                  Text('Our Team Members',
+                  Text('Anggota tim kami',
                       style: GoogleFonts.poppins(
                           fontSize: 23,
                           color: Colors.blue,
@@ -127,7 +127,8 @@ class AboutUs extends StatelessWidget {
                       children: [
                         Image.asset('images/asus_maizar.png', scale: 2),
                         Image.asset('images/m_asnin.png', scale: 2),
-                        Image.asset('images/4266925.png', scale: 2)
+                        Image.asset('images/4266925.png', scale: 2),
+                        Image.asset('images/kasyful.png', scale: 2)
                       ],
                     )
                   ),
@@ -138,7 +139,7 @@ class AboutUs extends StatelessWidget {
                       child: ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => const MemberDetails()),
+                              MaterialPageRoute(builder: (context) => const HemaquaTeam()),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -147,7 +148,7 @@ class AboutUs extends StatelessWidget {
                                   borderRadius: BorderRadius.all(Radius.circular(20))
                               )
                           ),
-                          child: Text('View member details',
+                          child: Text('Lihat detail anggota',
                               style: GoogleFonts.poppins(
                                   fontSize: 18,
                                   color: Colors.white,

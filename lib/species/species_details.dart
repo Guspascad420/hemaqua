@@ -1,11 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/database/database_service.dart';
 import 'package:hematologi/models/species.dart';
 
 class SpeciesDetails extends StatefulWidget {
-  const SpeciesDetails({super.key, required this.species, required this.addSpeciesToCart});
+  const SpeciesDetails({super.key, required this.species,
+    this.addSpeciesToCart, required this.station,
+    required this.isFavoriteSpecies, required this.showBottomNav,
+    this.removeSpeciesFromFavorite});
 
-  final void Function(Species) addSpeciesToCart;
+  final int station;
+  final bool isFavoriteSpecies;
+  final bool showBottomNav;
+  final void Function(Species)? addSpeciesToCart;
+  final void Function(Map<String, dynamic>)? removeSpeciesFromFavorite;
   final Species species;
 
   @override
@@ -13,6 +22,46 @@ class SpeciesDetails extends StatefulWidget {
 }
 
 class _SpeciesDetailsState extends State<SpeciesDetails> {
+
+  DatabaseService service = DatabaseService();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  bool _isFavorite = false;
+
+  void _showSnackBar(BuildContext context, String textContent, MaterialColor backgroundColor) {
+    SnackBar snackBar = SnackBar(
+      content: Text(textContent),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _addSpeciesToFavorite() {
+    service.addSpeciesToFavorite(widget.species, auth.currentUser!.uid);
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    _showSnackBar(context, "Berhasil menambahkan ikan ke favorit", Colors.blue);
+  }
+
+  void _removeSpeciesFromFavorite() {
+    if (widget.removeSpeciesFromFavorite != null) {
+      widget.removeSpeciesFromFavorite!(widget.species.toMap());
+    }
+    service.removeSpeciesFromFavorite(widget.species, auth.currentUser!.uid);
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    _showSnackBar(context, "Berhasil menghapus ikan dari favorit", Colors.blue);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _isFavorite = widget.isFavoriteSpecies;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +91,9 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                 fontWeight: FontWeight.w600
             )),
       ),
-      bottomNavigationBar: GestureDetector(
+      bottomNavigationBar: !widget.showBottomNav ? null : GestureDetector(
           onTap: () {
-            widget.addSpeciesToCart(widget.species);
+            widget.addSpeciesToCart!(widget.species);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 22),
@@ -98,12 +147,26 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-                              Text(widget.species.name,
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.blue,
-                                      fontSize: 27,
-                                      fontWeight: FontWeight.w500
-                                  )),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(widget.species.name,
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.blue,
+                                          fontSize: 27,
+                                          fontWeight: FontWeight.w500
+                                      )),
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 10),
+                                    child: IconButton(
+                                        onPressed: _isFavorite ? _removeSpeciesFromFavorite : _addSpeciesToFavorite,
+                                        icon: _isFavorite
+                                            ? const Icon(Icons.favorite, color: Colors.red)
+                                            : const Icon(Icons.favorite_border)
+                                    ),
+                                  )
+                                ],
+                              ),
                               Text(widget.species.latin_name,
                                   style: GoogleFonts.poppins(
                                       color: Colors.grey,
@@ -115,7 +178,7 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                                 children: [
                                   const Icon(Icons.location_on, color: Colors.blue, size: 40,),
                                   const SizedBox(width: 4),
-                                  Text('Location',
+                                  Text('Stasiun ${widget.station}',
                                       style: GoogleFonts.poppins(
                                           color: Colors.grey,
                                           fontSize: 18,

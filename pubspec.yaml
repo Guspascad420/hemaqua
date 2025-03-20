@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.1 <4.0.0'
+  sdk: '>=3.5.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -39,13 +39,15 @@ dependencies:
   dropdown_button2: ^2.3.9
   smooth_page_indicator: ^1.2.0
   expandable: ^5.0.1
-  firebase_core: ^2.24.2
-  firebase_storage: ^11.6.0
-  cloud_firestore: ^4.14.0
+  firebase_core: ^3.10.1
+  firebase_storage: ^12.4.1
+  cloud_firestore: ^5.6.2
+  path: 1.9.0
   google_maps_flutter: ^2.5.0
   geolocator: ^10.1.0
-  firebase_auth: ^4.16.0
-
+  firebase_auth: ^5.4.1
+  flutter_dash: ^1.0.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -100,14 +102,23 @@ flutter:
     - images/med_research.png
     - images/researchers.png
     - images/image_78.png
+    - images/eritrosit_formula.png
     - images/snail.png
     - images/sampling-water.png
     - images/frame_3860.png
     - images/betta_fish.png
     - images/purple_squid.png
     - images/conch_shell.png
+    - images/group_42311.png
+    - images/group_42312.png
+    - images/shell.png
+    - images/flowing_water.png
+    - images/group_42310.png
+    - images/empty_fav.png
+    - images/image_30.png
     - images/clownfish.png
     - images/koi_fish.png
+    - images/empty_img.png
     - images/octopus.png
     - images/cuttlefish.png
     - images/image_782.png
@@ -116,6 +127,7 @@ flutter:
     - images/fish2.png
     - images/goldfish.png
     - images/angelfish.png
+    - images/jpg_file.png
     - images/testing_wq.png
     - images/confirmed_amico.png
     - images/testing_wq2.png
@@ -133,6 +145,9 @@ flutter:
     - images/saved_data.png
     - images/image_25.png
     - images/image_32.png
+    - images/fish3.png
+    - images/dead_fish.png
+    - images/kasyful.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

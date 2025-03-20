@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/hemaqua_team.dart';
+import 'package:hematologi/home/guest_home_page.dart';
 import 'package:hematologi/login_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:hematologi/onboarding/onboarding_content.dart';
+
+import 'onboarding_team_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -61,11 +65,22 @@ class _OnboardingPageState extends State<OnboardingPage> {
         children: [
           onboardingContent('images/med_research.png', 'Penilaian Komprehensif Kesehatan Air Sungai',
               'Aplikasi Analisis Profil Hematologi Ikan, Hemosit Gastropoda dan Kualitas Air untuk Menilai Kesehatan Perairan Sungai', false),
-          onboardingContent('images/researchers.png', 'Tim Kami', '', false),
+          onboardingTeamPage('images/researchers.png', 'Tim Kami', 'Aplikasi ini dibuat oleh Tim FPIK Universitas Brawijaya',
+                  () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const HemaquaTeam())
+                    );
+                  }
+          ),
           onboardingContent('images/med_research.png', 'Ayo Mulai!', 'Bersiap menjadi kontributor untuk analisis Profil Hematologi Ikan, Hemosit Gastropoda, dan Kualitas Air', true,
                   () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const LoginPage())
+                    );
+                  },
+                  () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const GuestHomePage())
                     );
                   }),
         ],

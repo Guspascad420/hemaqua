@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/cards/fish_card2.dart';
 import 'package:hematologi/gallery/gallery_page.dart';
+import 'package:hematologi/gallery/wq_gallery_page.dart';
 import 'package:hematologi/static_grid.dart';
 
+import '../models/species.dart';
+
 class GalleryCategory extends StatelessWidget {
-  const GalleryCategory({super.key});
+  final List<Map<String, dynamic>> calculationResults;
+  final void Function(Map<String, dynamic>) removeCalculationResult;
+
+  const GalleryCategory({super.key, required this.calculationResults, required this.removeCalculationResult});
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +54,10 @@ class GalleryCategory extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
+                  List<Map<String, dynamic>> fishCalculationResults = calculationResults.where((species) => species['type'] == 'fish').toList();
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const GalleryPage(category: 'fish'))
+                      MaterialPageRoute(builder: (context) => GalleryPage(calculationResults: fishCalculationResults,
+                          category: 'fish', removeCalculationResult: removeCalculationResult))
                   );
                 },
                 child: Container(
@@ -58,25 +65,31 @@ class GalleryCategory extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     children: [
-                      Image.asset('images/fish.png', scale: 2.3),
-                      const SizedBox(height: 5,),
-                      Text('Ikan',
+                      Image.asset('images/fish3.png', scale: 2.3),
+                      const SizedBox(height: 10,),
+                      Text('Hematologi',
                           style: GoogleFonts.poppins(
-                              fontSize: 21,
+                              fontSize: 18,
                               color: Colors.blue,
                               fontWeight: FontWeight.w600
                           )),
+                      const SizedBox(height: 10),
                     ],
                   ),
                 ),
               ),
               GestureDetector(
                 onTap: () {
+                  List<Map<String, dynamic>> molluskCalculationResults = calculationResults.where((species) => species['type'] == 'molluscs').toList();
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const GalleryPage(category: 'molluscs'))
+                      MaterialPageRoute(builder: (context) => GalleryPage(
+                          calculationResults: molluskCalculationResults,
+                          category: 'molluscs',
+                          removeCalculationResult: removeCalculationResult
+                      ))
                   );
                 },
                 child: Container(
@@ -84,25 +97,28 @@ class GalleryCategory extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 30),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
+
                     children: [
-                      Image.asset('images/squid.png', scale: 5),
-                      const SizedBox(height: 5,),
-                      Text('Moluska',
+                      Image.asset('images/shell.png', scale: 2.3),
+                      const SizedBox(height: 10),
+                      Text('Hemosit',
                           style: GoogleFonts.poppins(
-                              fontSize: 21,
+                              fontSize: 18,
                               color: Colors.blue,
                               fontWeight: FontWeight.w600
                           )),
+                      const SizedBox(height: 10),
                     ],
                   ),
                 )
               ),
               GestureDetector(
                 onTap: () {
+                  List<Map<String, dynamic>> waterCalculationResult = calculationResults.where((species) => species['type'] == 'water quality').toList();
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const GalleryPage(category: 'blood'))
+                      MaterialPageRoute(builder: (context) => WQGalleryPage(calculationResult: waterCalculationResult))
                   );
                 },
                 child: Container(
@@ -110,17 +126,18 @@ class GalleryCategory extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     children: [
-                      Image.asset('images/water.png', scale: 2.5),
-                      const SizedBox(height: 5,),
-                      Text('Darah',
+                      Image.asset('images/testing_wq2.png', scale: 1.7),
+                      const SizedBox(height: 10),
+                      Text('Kualitas air',
                           style: GoogleFonts.poppins(
-                              fontSize: 21,
+                              fontSize: 18,
                               color: Colors.blue,
                               fontWeight: FontWeight.w600
                           )),
+                      const SizedBox(height: 10),
                     ],
                   ),
                 )

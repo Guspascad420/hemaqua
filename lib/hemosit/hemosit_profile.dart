@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hemosit/hemosit_add_species.dart';
+import 'package:hematologi/hemosit/hemosit_species_list.dart';
 import 'package:hematologi/station_selection.dart';
 
 class HemositProfile extends StatelessWidget {
@@ -15,7 +16,7 @@ class HemositProfile extends StatelessWidget {
           child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const StationSelection(nextWidget: HemositAddSpecies()))
+                    MaterialPageRoute(builder: (context) => StationSelection(nextWidget: (int station) => HemositSpeciesList(station: station,)))
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -39,7 +40,7 @@ class HemositProfile extends StatelessWidget {
         children: [
           const SizedBox(height: 80),
           Center(
-            child: Image.asset('images/image_782.png', scale: 2.3),
+            child: Image.asset('images/group_42312.png', scale: 2.3),
           ),
           const SizedBox(height: 20),
           Text('Profil Hemosit',
@@ -48,10 +49,10 @@ class HemositProfile extends StatelessWidget {
                   color: Colors.blue,
                   fontWeight: FontWeight.w600
               )),
-          const SizedBox(height: 20),
-          SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
-              child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+          Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Text("Analisis komposisi darah pada moluska untuk pemantauan"
+                  " sistem kekebalan moluska dan kualitas lingkungan perairan",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                       fontSize: 17,
@@ -60,7 +61,7 @@ class HemositProfile extends StatelessWidget {
                   ))
           )
         ],
-      ),
+      )
     );
   }
 

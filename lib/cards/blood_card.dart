@@ -7,7 +7,8 @@ Widget bloodCard(BuildContext context, Species species) {
   return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => SpeciesDetails(species: species, addSpeciesToCart: (Species) {}))
+            MaterialPageRoute(builder: (context) => SpeciesDetails(species: species,
+                station: 1, isFavoriteSpecies: false, showBottomNav: true, addSpeciesToCart: (Species) {}))
         );
       },
       child: Container(

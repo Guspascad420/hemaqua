@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hematologi/models/species.dart';
@@ -21,9 +23,44 @@ class DatabaseService {
     return fishList;
   }
 
+  Future<void> addNewSpecies(Map<String, dynamic> species, File imageFile) async {
+    String folder = species['type'] == 'fish' ? 'fishes' : 'molluscs';
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('$folder/${species['name']}.png');
+    await storageRef.putFile(imageFile);
+
+    species['image_url'] = species['name'];
+    await FirebaseFirestore.instance.collection('specieses').add(species);
+  }
+
+  void addCalculationResult(Map<String, dynamic> result, String uid) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'calculation_results' : FieldValue.arrayUnion([result])
+    });
+  }
+
+  void removeCalculationResult(Map<String, dynamic> result, String uid) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'calculation_results' : FieldValue.arrayRemove([result])
+    });
+  }
+
   void addSpeciesToCart(Species species, String uid, String field) async {
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       field : FieldValue.arrayUnion([species.toMap()])
+    });
+  }
+
+  void addSpeciesToFavorite(Species species, String uid) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'favorite_species' : FieldValue.arrayUnion([species.toMap()])
+    });
+  }
+
+  void removeSpeciesFromFavorite(Species species, String uid) async {
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'favorite_species' : FieldValue.arrayRemove([species.toMap()])
     });
   }
 

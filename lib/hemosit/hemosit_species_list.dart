@@ -1,17 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/hemosit/hemosit_add_species.dart';
 import 'package:hematologi/hemosit/hemosit_species_cart.dart';
 import 'package:hematologi/static_grid.dart';
-import 'package:hematologi/cards/fish_card2.dart';
 
+import '../cards/species_card2.dart';
 import '../database/database_service.dart';
 import '../models/species.dart';
 
 
 class HemositSpeciesList extends StatefulWidget {
+  final int station;
 
-  const HemositSpeciesList({super.key});
+  const HemositSpeciesList({super.key, required this.station});
 
   @override
   State<HemositSpeciesList> createState() => _HemositSpeciesListState();
@@ -24,6 +26,7 @@ class _HemositSpeciesListState extends State<HemositSpeciesList> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   List<Species> _speciesInCart = [];
+  List<Species> _favoriteSpeciesList = [];
 
   @override
   void initState() {
@@ -63,8 +66,10 @@ class _HemositSpeciesListState extends State<HemositSpeciesList> {
 
   Future<void> _loadUserData() async {
     Map<String, dynamic> userData = await service.retrieveUserData(auth.currentUser!.uid);
+    List<Map<String, dynamic>> favoriteSpeciesData = userData["favorite_species"];
     setState(() {
-      _speciesInCart.addAll(userData["hemosit_species_in_cart"]);
+      _favoriteSpeciesList.addAll(favoriteSpeciesData.map((e) => Species.fromMap(e)));
+      _speciesInCart.add(userData["hemosit_species_in_cart"][0]);
     });
   }
 
@@ -116,7 +121,7 @@ class _HemositSpeciesListState extends State<HemositSpeciesList> {
                 onPressed: () {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => HemositSpeciesCart(speciesInCart: _speciesInCart,
-                        removeSpeciesFromCart: _removeSpeciesFromCart,))
+                        removeSpeciesFromCart: _removeSpeciesFromCart, station: widget.station))
                   );
                 },
                 icon: const Icon(Icons.shopping_cart, color: Colors.blue),
@@ -130,6 +135,20 @@ class _HemositSpeciesListState extends State<HemositSpeciesList> {
                 fontWeight: FontWeight.w600
             )),
       ),
+      bottomNavigationBar: GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => HemositAddSpecies(station: widget.station))
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 22),
+              color: Colors.blue,
+              child: Text('Tambah spesies baru', textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                      fontSize: 20, color: Colors.white)),
+            )
+      ),
       body: FutureBuilder(
           future: futureMolluscslist,
           builder: (context, snapshot) {
@@ -139,13 +158,16 @@ class _HemositSpeciesListState extends State<HemositSpeciesList> {
               return const Text('Mohon cek koneksi internet kamu');
             }
             var molluscsList = snapshot.data!;
+            molluscsList = molluscsList.where((mollusk) =>
+                mollusk.stations!.contains(widget.station)).toList();
             return SingleChildScrollView(
                 child: StaticGrid(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     gap: 20,
                     children: [
                       for(var molluscs in molluscsList)
-                        speciesCard(context, molluscs, _addSpeciesToCart),
+                        speciesCard2(context, molluscs, widget.station,
+                            _favoriteSpeciesList.contains(molluscs), _addSpeciesToCart),
                     ]
                 )
             );

@@ -49,7 +49,8 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
-            (route) => false);
+            (route) => false
+        );
       }
     });
   }
@@ -76,23 +77,23 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Center(
                           child: Column(
-                        children: [
-                          Image.asset('images/logo_blue.png', scale: 2.5),
-                          const SizedBox(height: 15),
-                          Text('Mulai Sekarang',
-                              style: GoogleFonts.poppins(
-                                  color: Colors.blue[400],
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 15),
-                          Text(
-                              'Buat akun atau login untuk menjelajahi aplikasi kami',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                color: Colors.grey[600],
-                                fontSize: 13,
-                              )),
-                        ],
+                            children: [
+                              Image.asset('images/logo_blue.png', scale: 2.5),
+                              const SizedBox(height: 15),
+                              Text('Mulai Sekarang',
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.blue[400],
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w500)),
+                              const SizedBox(height: 15),
+                              Text(
+                                  'Buat akun atau login untuk menjelajahi aplikasi kami',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey[600],
+                                    fontSize: 13,
+                                  )),
+                            ],
                       )),
                       Container(
                           margin: const EdgeInsets.all(20),
@@ -214,7 +215,8 @@ class _LoginPageState extends State<LoginPage> {
                                   horizontal: 20, vertical: 18),
                               fillColor: Colors.white,
                             ),
-                          )),
+                          )
+                      ),
                       Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(

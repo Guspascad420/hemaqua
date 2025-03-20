@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class StationSelection extends StatefulWidget {
   const StationSelection({super.key, required this.nextWidget});
 
-  final Widget nextWidget;
+  final Widget Function(int) nextWidget;
 
   @override
   State<StationSelection> createState() => _StationSelectionState();
@@ -65,7 +65,7 @@ class _StationSelectionState extends State<StationSelection> {
           ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => widget.nextWidget)
+                    MaterialPageRoute(builder: (context) => widget.nextWidget(_currentSliderValue.toInt()))
                 );
               },
               style: ElevatedButton.styleFrom(

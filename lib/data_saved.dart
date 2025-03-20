@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/home/home_page.dart';
 
 class DataSaved extends StatelessWidget {
   const DataSaved({super.key});
@@ -35,8 +36,11 @@ class DataSaved extends StatelessWidget {
               height: 60,
               margin: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
-                  onPressed: (){
-
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomePage()),
+                            (route) => false);
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,

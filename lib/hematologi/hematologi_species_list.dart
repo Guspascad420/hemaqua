@@ -1,15 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/hematologi/hematologi_add_species.dart';
 import 'package:hematologi/hematologi/hematologi_species_cart.dart';
 import 'package:hematologi/static_grid.dart';
-import 'package:hematologi/cards/fish_card2.dart';
+import '../cards/species_card2.dart';
 import '../database/database_service.dart';
 import '../models/species.dart';
 
 
 class HematologiSpeciesList extends StatefulWidget {
-  const HematologiSpeciesList({super.key});
+  final int station;
+
+  const HematologiSpeciesList({super.key, required this.station});
 
   @override
   State<HematologiSpeciesList> createState() => _HematologiSpeciesListState();
@@ -22,6 +25,7 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   List<Species> _speciesInCart = [];
+  List<Species> _favoriteSpeciesList = [];
 
   @override
   void initState() {
@@ -61,8 +65,10 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
 
   Future<void> _loadUserData() async {
     Map<String, dynamic> userData = await service.retrieveUserData(auth.currentUser!.uid);
+    List<Map<String, dynamic>> favoriteSpeciesData = userData["favorite_species"];
     setState(() {
-      _speciesInCart.addAll(userData["hematologi_species_in_cart"]);
+      _favoriteSpeciesList.addAll(favoriteSpeciesData.map((e) => Species.fromMap(e)));
+      _speciesInCart.add(Species.fromMap(userData["hematologi_species_in_cart"][0]));
     });
   }
 
@@ -114,7 +120,7 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
                 onPressed: () {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => HematologiSpeciesCart(speciesInCart: _speciesInCart,
-                        removeSpeciesFromCart: _removeSpeciesFromCart,))
+                        removeSpeciesFromCart: _removeSpeciesFromCart, station: widget.station))
                   );
                 },
                 icon: const Icon(Icons.shopping_cart, color: Colors.blue),
@@ -128,6 +134,24 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
                 fontWeight: FontWeight.w600
             )),
       ),
+        bottomNavigationBar: GestureDetector(
+            onTap: () async {
+              await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => HematologiAddSpecies(station: widget.station))
+              );
+              setState(() {
+                _loadUserData();
+                futureFishList = service.retrieveFishes();
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 22),
+              color: Colors.blue,
+              child: Text('Tambah spesies baru', textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                      fontSize: 20, color: Colors.white)),
+            )
+        ),
       body: FutureBuilder(
         future: futureFishList,
         builder: (context, snapshot) {
@@ -137,13 +161,16 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
             return const Text('Mohon cek koneksi internet kamu');
           }
           var fishList = snapshot.data!;
+          fishList = fishList.where((fish) => fish.stations!.contains(widget.station))
+              .toList();
           return SingleChildScrollView(
             child: StaticGrid(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 gap: 20,
                 children: [
                   for(var fish in fishList)
-                    speciesCard(context, fish, _addSpeciesToCart),
+                    speciesCard2(context, fish, widget.station,
+                        _favoriteSpeciesList.contains(fish) ? true : false, _addSpeciesToCart),
                 ]
             )
           );

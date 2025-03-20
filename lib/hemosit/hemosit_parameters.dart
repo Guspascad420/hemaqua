@@ -9,8 +9,13 @@ import 'package:hematologi/data_saved.dart';
 import 'package:hematologi/hemosit/hemosit_results.dart';
 import 'package:hematologi/parameter_box.dart';
 
+import '../models/species.dart';
+
 class HemositParameters extends StatefulWidget {
-  const HemositParameters({super.key});
+  final Species species;
+  final int station;
+
+  const HemositParameters({super.key, required this.species, required this.station});
 
   @override
   State<HemositParameters> createState() => _HemositParametersState();
@@ -53,13 +58,14 @@ class _HemositParametersState extends State<HemositParameters> {
         bottomNavigationBar: GestureDetector(
             onTap: () {
               Map<String, double> calculationResults = {
-                'thc': thc,
-                'hyalin': hyalin,
-                'granular': granular,
-                'semi_granular': semiGranular,
+                'THC': thc,
+                'Hyalin': hyalin,
+                'Granular': granular,
+                'Semi Granular': semiGranular,
               };
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => HemositResults(calculationResults: calculationResults) )
+                  MaterialPageRoute(builder: (context) => HemositResults(calculationResults: calculationResults,
+                    species: widget.species, station: widget.station, showBottomNav: true))
               );
             },
             child: Container(

@@ -1,15 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/data_saved.dart';
+import 'package:hematologi/database/database_service.dart';
 
 class WaterQualityOutputs extends StatefulWidget {
-  const WaterQualityOutputs({super.key});
+  final double wqi;
+  final int station;
+  final String resultStatus;
+  final String copywriteText;
+  final bool showSaveButton;
+
+  const WaterQualityOutputs({super.key, required this.wqi, required this.resultStatus,
+    required this.copywriteText, required this.station, required this.showSaveButton});
 
   @override
   State<WaterQualityOutputs> createState() => _WaterQualityOutputsState();
 }
 
 class _WaterQualityOutputsState extends State<WaterQualityOutputs> {
+  DatabaseService service = DatabaseService();
+  FirebaseAuth auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +50,7 @@ class _WaterQualityOutputsState extends State<WaterQualityOutputs> {
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
               )
           ),
-          title: Text('Result',
+          title: Text('Hasil',
               style: GoogleFonts.poppins(
                   fontSize: 21,
                   color: Colors.blue,
@@ -65,39 +77,53 @@ class _WaterQualityOutputsState extends State<WaterQualityOutputs> {
                             color: Colors.grey[700],
                             fontWeight: FontWeight.w500
                         )),
-                    Text('0.00',
+                    Text(widget.wqi.toStringAsFixed(2),
                         style: GoogleFonts.poppins(
                             fontSize: 78,
                             color: Colors.blue,
                             fontWeight: FontWeight.bold
                         )),
                     const SizedBox(height: 15),
-                    Text('Status',
+                    Text('Status hasil: ',
+                        style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w600
+                        )),
+                    Text(widget.resultStatus,
                         style: GoogleFonts.poppins(
                             fontSize: 23,
                             color: Colors.blue,
                             fontWeight: FontWeight.w600
                         )),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(
-                              fontSize: 17,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w500
-                          ))
-                    )
+                    const SizedBox(height: 10),
+                    Text(widget.copywriteText,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500
+                        ))
                   ],
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
+              if (widget.showSaveButton) Container(
                   width: double.infinity,
                   height: 60,
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   child: ElevatedButton(
                       onPressed: (){
+                        DateTime now = DateTime.now();
+                        String formattedDate =
+                            '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
+                        var calculationResult = {
+                          "pollution_index": widget.wqi,
+                          "station": widget.station,
+                          "date": formattedDate,
+                          "type": "water quality"
+                        };
+                        service.addCalculationResult(calculationResult, auth.currentUser!.uid);
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => const DataSaved())
                         );

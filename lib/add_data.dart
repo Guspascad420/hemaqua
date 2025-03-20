@@ -21,7 +21,7 @@ class _AddDataState extends State<AddData> {
         backgroundColor: const Color(0xFFF4FBFF),
         centerTitle: true,
         leading: const SizedBox(),
-        title: Text('Add Data',
+        title: Text('Tambah Data',
             style: GoogleFonts.poppins(
                 fontSize: 21,
                 color: Colors.blue,
@@ -46,24 +46,14 @@ class _AddDataState extends State<AddData> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
                 children: [
-                  Image.asset('images/image_78.png', scale: 2.5),
+                  Image.asset('images/fish3.png', scale: 2.5),
                   const SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Data Hematologi',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      Text('Description',
-                          style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500
-                          )),
-                    ],
-                  )
+                  Text('Data Hematologi',
+                      style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w600
+                      )),
                 ],
               ),
             )
@@ -83,24 +73,14 @@ class _AddDataState extends State<AddData> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               child: Row(
                 children: [
-                  Image.asset('images/snail.png', scale: 2.5),
+                  Image.asset('images/shell.png', scale: 2.5),
                   const SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Data Hemosit',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      Text('Description',
-                          style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500
-                          )),
-                    ],
-                  )
+                  Text('Data Hemosit',
+                      style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w600
+                      )),
                 ],
               ),
             )
@@ -122,22 +102,12 @@ class _AddDataState extends State<AddData> {
                   children: [
                     Image.asset('images/testing_wq2.png', scale: 1.7),
                     const SizedBox(width: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Kualitas Air',
-                            style: GoogleFonts.poppins(
-                                fontSize: 18,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w600
-                            )),
-                        Text('Description',
-                            style: GoogleFonts.poppins(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500
-                            )),
-                      ],
-                    )
+                    Text('Kualitas Air',
+                        style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w600
+                        ))
                   ],
                 ),
               )

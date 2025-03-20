@@ -16,7 +16,7 @@ class WaterQualityProfile extends StatelessWidget {
           child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const StationSelection(nextWidget: WaterQualityParameters()))
+                    MaterialPageRoute(builder: (context) => StationSelection(nextWidget: (int station) => WaterQualityParameters(station: station,)))
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -50,15 +50,16 @@ class WaterQualityProfile extends StatelessWidget {
                   fontWeight: FontWeight.w600
               )),
           const SizedBox(height: 20),
-          SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
-              child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                      fontSize: 17,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500
-                  ))
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text("Monitoring parameter kualitas perairan merupakan "
+                "data dukung monitoring kesehatan lingkungan sebagai habitat organisme perairan",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                    fontSize: 17,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500
+                ))
           )
         ],
       ),

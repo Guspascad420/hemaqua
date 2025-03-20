@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Widget onboardingContent(String imageRes, String title, String content,
-    bool isLastPage, [void Function()? onButtonPressed]) {
+    bool isLastPage, [void Function()? onButtonPressed, void Function()? onLoginAsGuest]) {
   return Column(
     children: [
       const SizedBox(height: 80),
@@ -50,7 +50,7 @@ Widget onboardingContent(String imageRes, String title, String content,
                     width: double.infinity,
                     margin: const EdgeInsets.symmetric(horizontal: 50),
                     child: ElevatedButton(
-                        onPressed: onButtonPressed,
+                        onPressed: onLoginAsGuest,
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(

@@ -3,12 +3,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/bottom_nav_bar.dart';
+import 'package:hematologi/cards/empty_fish_card.dart';
 import 'package:hematologi/database/database_service.dart';
-import 'package:hematologi/documentary_card.dart';
 import 'package:hematologi/favorite/favorite_page.dart';
-import 'package:hematologi/cards/fish_card.dart';
-import 'package:hematologi/home/history_page.dart';
 import 'package:hematologi/gallery/gallery_category.dart';
+import 'package:hematologi/models/species.dart';
+
+import '../cards/species_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,12 +20,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DatabaseService service = DatabaseService();
-  String _username = '';
   Map<String, dynamic> _user = {};
   bool _isLoading = true;
   late Future<Map<String, dynamic>> futureUserData;
+  List<Map<String, dynamic>> _calculationResults = [];
+  List<Map<String, dynamic>> _favoriteSpecies = [];
 
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  void _removeCalculationResult(Map<String, dynamic> species) {
+    setState(() {
+      _calculationResults.remove(species);
+    });
+  }
+
+  void _removeSpeciesFromFavorite(Map<String, dynamic> species) {
+    setState(() {
+      _favoriteSpecies = _favoriteSpecies.where((value) => value['name'] != species['name']).toList();
+    });
+  }
 
   @override
   void initState() {
@@ -34,9 +48,12 @@ class _HomePageState extends State<HomePage> {
     futureUserData.then((value) => {
       setState(() {
         _user = value;
-        _username = value["username"];
-        debugPrint('aaahh');
-        debugPrint(_username);
+        _calculationResults = (_user['calculation_results'] as List)
+            .map((species) => species as Map<String, dynamic>)
+            .toList();
+        _favoriteSpecies = (_user['favorite_species'] as List)
+            .map((species) => species as Map<String, dynamic>)
+            .toList();
         _isLoading = false;
       })
     });
@@ -46,7 +63,7 @@ class _HomePageState extends State<HomePage> {
     try {
       // Get the download URL
       String downloadURL = await FirebaseStorage.instance
-          .ref('fishes/mujair.png') // Replace with your image path in storage
+          .ref('fishes/mujair.png')
           .getDownloadURL();
 
       debugPrint('Download URL : $downloadURL');
@@ -54,7 +71,6 @@ class _HomePageState extends State<HomePage> {
       debugPrint('Error: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -94,34 +110,8 @@ class _HomePageState extends State<HomePage> {
                                 ));
                           }
                       ),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on, color: Colors.blue,),
-                          Text('Lokasi',
-                              style: GoogleFonts.poppins(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500
-                              ))
-                        ],
-                      )
                     ],
                   ),
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const HistoryPage()),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                            border: Border.all(color: const Color(0xFFF2F2F2))
-                        ),
-                        child: const Icon(Icons.history, color: Colors.blue, size: 30),
-                      )
-                  )
                 ],
               ),
               const SizedBox(height: 20),
@@ -208,39 +198,133 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Favorit',
-                      style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          color: const Color(0xFF3B82F6),
-                          fontWeight: FontWeight.bold
-                      )),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const FavoritePage())
-                        );
-                      },
-                      child: Text('Lihat semua',
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: Text('Favorit',
                           style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            color: const Color(0xFF3B82F6),
-                          ))
-                  )
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  fishCard('images/clown_fish.png', 'Fish Name', 'Species Name'),
-                  const SizedBox(width: 15),
-                  fishCard('images/betta_transparent.png', 'Fish Name', 'Species Name')
-                ],
-              ),
-              const SizedBox(height: 20),
+                              fontSize: 18,
+                              color: const Color(0xFF3B82F6),
+                              fontWeight: FontWeight.bold
+                          )),
+                    ),
+                    Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => FavoritePage(favoriteSpecies:
+                                  _favoriteSpecies, removeSpeciesFromFavorite: _removeSpeciesFromFavorite))
+                              );
+                            },
+                            child: Text('Lihat semua',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  color: const Color(0xFF3B82F6),
+                                ))
+                        )
+                    )
+                  ],
+                ),
+                _favoriteSpecies.isNotEmpty
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          speciesCard(context, Species.fromMap(_favoriteSpecies[0]), _removeSpeciesFromFavorite),
+                          const SizedBox(width: 15),
+                          // fishCard('images/betta_transparent.png', 'Fish Name', 'Species Name')
+                          _favoriteSpecies.length > 1
+                              ? speciesCard(context, Species.fromMap(_favoriteSpecies[1]), _removeSpeciesFromFavorite)
+                              : SizedBox()
+                        ],
+                    )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          emptyFishCard(),
+                          const SizedBox(width: 15),
+                          emptyFishCard()
+                        ],
+                      )
+              ],
+            ),
+              // FutureBuilder(
+              //     future: futureUserData,
+              //     builder: (context, snapshot) {
+              //       if (snapshot.hasData) {
+              //         return Column(
+              //           children: [
+              //             Row(
+              //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //               children: [
+              //                 Container(
+              //                   margin: const EdgeInsets.only(bottom: 10),
+              //                   child: Text('Favorit',
+              //                     style: GoogleFonts.poppins(
+              //                       fontSize: 18,
+              //                       color: const Color(0xFF3B82F6),
+              //                       fontWeight: FontWeight.bold
+              //                       )),
+              //                 ),
+              //                 Container(
+              //                   margin: const EdgeInsets.only(bottom: 10),
+              //                   child: TextButton(
+              //                       onPressed: () {
+              //                         Navigator.of(context).push(MaterialPageRoute(
+              //                             builder: (context) => FavoritePage(favoriteSpecies:
+              //                             snapshot.data!['favorite_species'].cast<Map<String, dynamic>>()))
+              //                         );
+              //                       },
+              //                       child: Text('Lihat semua',
+              //                           style: GoogleFonts.poppins(
+              //                             fontSize: 18,
+              //                             color: const Color(0xFF3B82F6),
+              //                           ))
+              //                   )
+              //                 )
+              //               ],
+              //             ),
+              //             (snapshot.data!['favorite_species'].cast<Map<String, dynamic>>()).isNotEmpty
+              //                 ? Row(
+              //                     mainAxisAlignment: MainAxisAlignment.center,
+              //                     children: [
+              //                       fishCard(context, Species(name: snapshot.data!['favorite_species'][0]["name"],
+              //                           latin_name: snapshot.data!['favorite_species'][0]["latin_name"],
+              //                           type: snapshot.data!['favorite_species'][0]["type"],
+              //                           image_url: snapshot.data!['favorite_species'][0]["image_url"],
+              //                           description: snapshot.data!['favorite_species'][0]["description"])),
+              //                       const SizedBox(width: 15),
+              //                       // fishCard('images/betta_transparent.png', 'Fish Name', 'Species Name')
+              //                       (snapshot.data!['favorite_species'].cast<Map<String, dynamic>>()).length > 1
+              //                         ? fishCard(context, Species(name: snapshot.data!['favorite_species'][1]["name"],
+              //                             latin_name: snapshot.data!['favorite_species'][1]["latin_name"],
+              //                             type: snapshot.data!['favorite_species'][1]["type"],
+              //                             image_url: snapshot.data!['favorite_species'][1]["image_url"],
+              //                             description: snapshot.data!['favorite_species'][1]["description"]))
+              //                         : SizedBox()
+              //                     ],
+              //                   )
+              //                 : Row(
+              //                     mainAxisAlignment: MainAxisAlignment.center,
+              //                     children: [
+              //                       emptyFishCard(),
+              //                       const SizedBox(width: 15),
+              //                       emptyFishCard()
+              //                     ],
+              //                   )
+              //           ],
+              //         );
+              //       }
+              //       return const Center(
+              //         child: CircularProgressIndicator(color: Colors.blue),
+              //       );
+              //     }
+              // ),
+              const SizedBox(height: 15),
               Container(
                   decoration: const BoxDecoration(
                       color: Colors.white,
@@ -262,7 +346,8 @@ class _HomePageState extends State<HomePage> {
                           TextButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const GalleryCategory())
+                                    builder: (context) => GalleryCategory(calculationResults: _calculationResults,
+                                        removeCalculationResult: _removeCalculationResult))
                                 );
                               },
                               child: Text('Lihat semua',
@@ -279,7 +364,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Column(
                             children: [
-                              Image.asset('images/rectangle_3.png', scale: 2.3),
+                              Image.asset('images/image_30.png', scale: 2.3),
                               Text('Ikan',
                                   style: GoogleFonts.poppins(
                                       fontSize: 15,
@@ -303,8 +388,8 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(width: 20),
                           Column(
                             children: [
-                              Image.asset('images/image_32.png', scale: 2.3),
-                              Text('Sarawak',
+                              Image.asset('images/flowing_water.png', scale: 2.3),
+                              Text('Air',
                                   style: GoogleFonts.poppins(
                                       fontSize: 15,
                                       color: Colors.grey[700],
