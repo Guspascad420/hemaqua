@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/add_data.dart';
 import 'package:hematologi/bottom_nav_bar.dart';
 import 'package:hematologi/cards/empty_fish_card.dart';
 import 'package:hematologi/database/database_service.dart';
 import 'package:hematologi/favorite/favorite_page.dart';
-import 'package:hematologi/gallery/gallery_category.dart';
+import 'package:hematologi/history/history_category.dart';
 import 'package:hematologi/models/species.dart';
 
 import '../cards/species_card.dart';
@@ -166,8 +167,8 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.only(left: 25, top: 10),
                               child: FilledButton(
                                   onPressed: (){
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(builder: (context) => const HomePage()), (route) => false
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(builder: (context) => const AddData())
                                     );
                                   },
                                   style: FilledButton.styleFrom(
@@ -191,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                             )
                           ],
                         ),
-                        Image.asset('images/sun_rise.png', scale: 3.5)
+                        Image.asset('images/sun_rise.png', width: MediaQuery.of(context).size.width * 0.3)
                       ],
                     ),
                   ],
@@ -337,7 +338,7 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Galeri',
+                          Text('Riwayat',
                               style: GoogleFonts.poppins(
                                   fontSize: 18,
                                   color: const Color(0xFF3B82F6),
@@ -346,7 +347,7 @@ class _HomePageState extends State<HomePage> {
                           TextButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => GalleryCategory(calculationResults: _calculationResults,
+                                    builder: (context) => HistoryCategory(calculationResults: _calculationResults,
                                         removeCalculationResult: _removeCalculationResult))
                                 );
                               },

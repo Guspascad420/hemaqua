@@ -5,7 +5,7 @@ import '../models/species.dart';
 import '../species/species_details.dart';
 
 Widget speciesCard(BuildContext context, Species species,
-  void Function(Map<String, dynamic>) removeSpeciesFromFavorite) {
+  [void Function(Map<String, dynamic>)? removeSpeciesFromFavorite]) {
   return GestureDetector(
     onTap: () {
       Navigator.of(context).push(

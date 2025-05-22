@@ -33,12 +33,14 @@ class AboutUs extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Text('Tentang aplikasi kami',
-                      style: GoogleFonts.poppins(
-                          fontSize: 23,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600
-                      )),
+                  FittedBox(
+                    child: Text('Tentang aplikasi kami',
+                        style: GoogleFonts.poppins(
+                            fontSize: 23,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600
+                        )),
+                  ),
                   const SizedBox(height: 10),
                   Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
                       ' sed do eiusmod tempor incididunt ut labore et dolore magna'
@@ -51,12 +53,14 @@ class AboutUs extends StatelessWidget {
                           color: Colors.white
                       )),
                   const SizedBox(height: 35),
-                  Text('Mengapa aplikasi kami?',
-                      style: GoogleFonts.poppins(
-                          fontSize: 23,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600
-                      )),
+                  FittedBox(
+                    child: Text('Mengapa aplikasi kami?',
+                        style: GoogleFonts.poppins(
+                            fontSize: 23,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600
+                        )),
+                  ),
                   const SizedBox(height: 10),
                   Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
                       ' sed do eiusmod tempor incididunt ut labore et dolore magna'

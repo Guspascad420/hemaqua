@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/gallery/gallery_page.dart';
-import 'package:hematologi/gallery/wq_gallery_page.dart';
+import 'package:hematologi/gallery/blood_gallery_page.dart';
+import 'package:hematologi/gallery/fish_gallery_page.dart';
+import 'package:hematologi/gallery/mollusk_gallery_page.dart';
+import 'package:hematologi/history/history_page.dart';
+import 'package:hematologi/history/wq_gallery_page.dart';
 import 'package:hematologi/static_grid.dart';
 
-import '../models/species.dart';
-
 class GalleryCategory extends StatelessWidget {
-  final List<Map<String, dynamic>> calculationResults;
-  final void Function(Map<String, dynamic>) removeCalculationResult;
 
-  const GalleryCategory({super.key, required this.calculationResults, required this.removeCalculationResult});
+  const GalleryCategory({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,102 +47,94 @@ class GalleryCategory extends StatelessWidget {
             )),
       ),
       body: SingleChildScrollView(
-        child: StaticGrid(
-            padding: const EdgeInsets.all(20),
-            gap: 35,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  List<Map<String, dynamic>> fishCalculationResults = calculationResults.where((species) => species['type'] == 'fish').toList();
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => GalleryPage(calculationResults: fishCalculationResults,
-                          category: 'fish', removeCalculationResult: removeCalculationResult))
-                  );
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Image.asset('images/fish3.png', scale: 2.3),
-                      const SizedBox(height: 10,),
-                      Text('Hematologi',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      const SizedBox(height: 10),
-                    ],
+          child: StaticGrid(
+              padding: const EdgeInsets.all(20),
+              gap: 35,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const FishGalleryPage())
+                    );
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Image.asset('images/fish3.png', scale: 2.3),
+                        const SizedBox(height: 10,),
+                        Text('Hematologi',
+                            style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w600
+                            )),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  List<Map<String, dynamic>> molluskCalculationResults = calculationResults.where((species) => species['type'] == 'molluscs').toList();
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => GalleryPage(
-                          calculationResults: molluskCalculationResults,
-                          category: 'molluscs',
-                          removeCalculationResult: removeCalculationResult
-                      ))
-                  );
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
+                GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const MolluskGalleryPage())
+                      );
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(20))
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
 
-                    children: [
-                      Image.asset('images/shell.png', scale: 2.3),
-                      const SizedBox(height: 10),
-                      Text('Hemosit',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
+                        children: [
+                          Image.asset('images/shell.png', scale: 2.3),
+                          const SizedBox(height: 10),
+                          Text('Hemosit',
+                              style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w600
+                              )),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    )
+                ),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const BloodGalleryPage())
+                      );
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(20))
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Image.asset('images/water.png', scale: 1.7),
+                          const SizedBox(height: 10),
+                          Text('Darah',
+                              style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w600
+                              )),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    )
                 )
-              ),
-              GestureDetector(
-                onTap: () {
-                  List<Map<String, dynamic>> waterCalculationResult = calculationResults.where((species) => species['type'] == 'water quality').toList();
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => WQGalleryPage(calculationResult: waterCalculationResult))
-                  );
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Image.asset('images/testing_wq2.png', scale: 1.7),
-                      const SizedBox(height: 10),
-                      Text('Kualitas air',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                )
-              )
-            ]
-        )
+              ]
+          )
       ),
     );
   }

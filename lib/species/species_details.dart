@@ -62,7 +62,6 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
     _isFavorite = widget.isFavoriteSpecies;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,14 +155,17 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                                           fontSize: 27,
                                           fontWeight: FontWeight.w500
                                       )),
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 10),
-                                    child: IconButton(
-                                        onPressed: _isFavorite ? _removeSpeciesFromFavorite : _addSpeciesToFavorite,
-                                        icon: _isFavorite
-                                            ? const Icon(Icons.favorite, color: Colors.red)
-                                            : const Icon(Icons.favorite_border)
-                                    ),
+                                  Visibility(
+                                      visible: widget.removeSpeciesFromFavorite != null,
+                                      child: Container(
+                                          margin: const EdgeInsets.only(right: 10),
+                                          child: IconButton(
+                                              onPressed: _isFavorite ? _removeSpeciesFromFavorite : _addSpeciesToFavorite,
+                                              icon: _isFavorite
+                                                  ? const Icon(Icons.favorite, color: Colors.red)
+                                                  : const Icon(Icons.favorite_border)
+                                          )
+                                      )
                                   )
                                 ],
                               ),

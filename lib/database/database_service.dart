@@ -97,4 +97,21 @@ class DatabaseService {
     }
     return molluscsList;
   }
+
+  Future<List<Map<String, dynamic>>> retrieveBloods() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('bloods')
+        .get();
+    List<Map<String, dynamic>> bloodsList = [];
+    for (var doc in querySnapshot.docs) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      String imageUrl = await FirebaseStorage.instance
+          .ref('bloods/${data['image_url']}.png')
+          .getDownloadURL();
+
+      data['image_url'] = imageUrl;
+      bloodsList.add(data);
+    }
+    return bloodsList;
+  }
 }

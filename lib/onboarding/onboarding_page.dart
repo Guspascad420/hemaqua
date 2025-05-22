@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hemaqua_team.dart';
@@ -16,8 +17,65 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
   int _currentPage = 0;
   final PageController controller = PageController();
+
+  Future<void> _signInAnonymously() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      UserCredential userCredential = await _auth.signInAnonymously();
+      User? user = userCredential.user;
+
+      if (user != null) {
+        print("Signed in anonymously. UID: ${user.uid}");
+        // Navigate to your main app content
+        // Example:
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const GuestHomePage()),
+        );
+      } else {
+        // This case generally shouldn't happen if signInAnonymously succeeds
+        print("Anonymous sign-in failed: User is null.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Gagal masuk sebagai tamu. Mohon coba lagi'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'operation-not-allowed') {
+        errorMessage = 'Anonymous authentication is not enabled in Firebase for this project.';
+      } else {
+        errorMessage = 'An error occurred during guest login: ${e.message}';
+      }
+      print("Firebase Auth Error: $errorMessage");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } catch (e) {
+      print("Unexpected Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An unexpected error occurred: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -78,11 +136,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         builder: (context) => const LoginPage())
                     );
                   },
-                  () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const GuestHomePage())
-                    );
-                  }),
+                  _signInAnonymously),
         ],
       ),
     );

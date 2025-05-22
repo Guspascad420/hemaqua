@@ -7,7 +7,7 @@ import 'package:hematologi/static_grid.dart';
 import '../cards/species_card2.dart';
 import '../database/database_service.dart';
 import '../models/species.dart';
-
+import 'package:collection/collection.dart';
 
 class HematologiSpeciesList extends StatefulWidget {
   final int station;
@@ -65,7 +65,8 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
 
   Future<void> _loadUserData() async {
     Map<String, dynamic> userData = await service.retrieveUserData(auth.currentUser!.uid);
-    List<Map<String, dynamic>> favoriteSpeciesData = userData["favorite_species"];
+    List<Map<String, dynamic>> favoriteSpeciesData = (userData["favorite_species"] as List).map((e) => Map<String, dynamic>.from(e)).toList();
+    print(favoriteSpeciesData[0]);
     setState(() {
       _favoriteSpeciesList.addAll(favoriteSpeciesData.map((e) => Species.fromMap(e)));
       _speciesInCart.add(Species.fromMap(userData["hematologi_species_in_cart"][0]));
@@ -170,7 +171,7 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
                 children: [
                   for(var fish in fishList)
                     speciesCard2(context, fish, widget.station,
-                        _favoriteSpeciesList.contains(fish) ? true : false, _addSpeciesToCart),
+                        _favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false, _addSpeciesToCart),
                 ]
             )
           );

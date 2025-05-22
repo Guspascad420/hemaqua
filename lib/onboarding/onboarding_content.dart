@@ -37,7 +37,7 @@ Widget onboardingContent(String imageRes, String title, String content,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0)),
                             padding: const EdgeInsets.symmetric(vertical: 12)),
-                        child: Text('Get Started',
+                        child: Text('Mulai',
                             style: GoogleFonts.inter(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ Widget onboardingContent(String imageRes, String title, String content,
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 12)),
 
-                        child: Text('Login as guest',
+                        child: Text('Masuk sebagai tamu',
                             style: GoogleFonts.inter(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,

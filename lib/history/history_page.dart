@@ -7,19 +7,19 @@ import 'package:hematologi/models/species.dart';
 
 import '../database/database_service.dart';
 
-class GalleryPage extends StatefulWidget {
+class HistoryPage extends StatefulWidget {
   final List<Map<String, dynamic>> calculationResults;
   final void Function(Map<String, dynamic>) removeCalculationResult;
   final String category;
 
-  const GalleryPage({super.key, required this.category, required this.calculationResults, required this.removeCalculationResult});
+  const HistoryPage({super.key, required this.category, required this.calculationResults, required this.removeCalculationResult});
 
 
   @override
-  State<GalleryPage> createState() => _GalleryPageState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class _GalleryPageState extends State<GalleryPage> {
+class _HistoryPageState extends State<HistoryPage> {
 
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;

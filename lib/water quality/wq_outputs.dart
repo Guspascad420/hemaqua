@@ -77,12 +77,14 @@ class _WaterQualityOutputsState extends State<WaterQualityOutputs> {
                             color: Colors.grey[700],
                             fontWeight: FontWeight.w500
                         )),
-                    Text(widget.wqi.toStringAsFixed(2),
-                        style: GoogleFonts.poppins(
-                            fontSize: 78,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold
-                        )),
+                    FittedBox(
+                      child: Text(widget.wqi.toStringAsFixed(2),
+                          style: GoogleFonts.poppins(
+                              fontSize: 74,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold
+                          )),
+                    ),
                     const SizedBox(height: 15),
                     Text('Status hasil: ',
                         style: GoogleFonts.poppins(

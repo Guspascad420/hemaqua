@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/gallery/gallery_category.dart';
 
 class GuestHomePage extends StatelessWidget {
   const GuestHomePage({super.key});
@@ -113,7 +114,9 @@ class GuestHomePage extends StatelessWidget {
                             )),
                         TextButton(
                             onPressed: () {
-
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => const GalleryCategory())
+                              );
                             },
                             child: Text('Lihat semua',
                                 style: GoogleFonts.poppins(
@@ -153,8 +156,8 @@ class GuestHomePage extends StatelessWidget {
                         const SizedBox(width: 20),
                         Column(
                           children: [
-                            Image.asset('images/flowing_water.png', scale: 2.3),
-                            Text('Air',
+                            Image.asset('images/image_32.png', scale: 2.3),
+                            Text('Darah',
                                 style: GoogleFonts.poppins(
                                     fontSize: 15,
                                     color: Colors.grey[700],

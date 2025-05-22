@@ -13,7 +13,7 @@ class Species {
   factory Species.fromMap(Map<String, dynamic> data) {
     return Species(
         klass: data['class'] ?? "unknown",
-        stations: (data['weight'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
+        stations: (data['stations'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
         name: data['name'],
         latin_name: data['latin_name'],
         type: data['type'],

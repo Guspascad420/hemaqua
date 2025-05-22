@@ -284,21 +284,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.only(top: 15),
-                              width: 45,
-                              height: 45,
-                              decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  color: Colors.blue
-                              ),
-                            ),
+                            Image.asset('images/logo_blue.png', scale: 3.5),
                             const SizedBox(width: 10),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 15),
                                 Text('Tentang Kami',
                                     style: GoogleFonts.poppins(
                                         fontSize: 16,
@@ -314,27 +306,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             )
                           ],
                         ),
-                        Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            child: const Icon(Icons.arrow_forward_ios)
-                        )
+                        const Icon(Icons.arrow_forward_ios)
                       ],
                     )
                   ),
-                  const SizedBox(height: 20),
-                  Text('Atau temukan kami di',
-                      style: GoogleFonts.poppins(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w500
-                      )),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Image.asset('images/facebook.png', scale: 2.5),
-                      const SizedBox(width: 10),
-                      Image.asset('images/linkedin.png', scale: 2.5)
-                    ],
-                  )
                 ],
               ),
             ),

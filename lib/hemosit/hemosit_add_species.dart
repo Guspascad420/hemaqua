@@ -127,7 +127,7 @@ class _HemositAddSpeciesState extends State<HemositAddSpecies> {
     return Scaffold(
         body: Stack(
           children: [
-            Image.asset('images/marine_mollusca.png', scale: 2.5),
+            Container(height: double.infinity, color: Colors.red,),
             Column(
               children: [
                 const SizedBox(height: 40),
@@ -317,6 +317,7 @@ class _HemositAddSpeciesState extends State<HemositAddSpecies> {
                                       ],
                                     )
                                 ),
+                              const SizedBox(height: 20),
                               reusableTextField('Kunci Identifikasi (Opsional)', identificationKey),
                               const SizedBox(height: 40),
                               Center(

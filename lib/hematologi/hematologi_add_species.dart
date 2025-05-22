@@ -50,7 +50,6 @@ class _HematologiAddSpeciesState extends State<HematologiAddSpecies> {
 
   Future<void> _uploadSpecies(BuildContext context) async {
     if (_imageFile == null) {
-      debugPrint('dqwwqqwd');
       return;
     }
     setState(() {
@@ -127,7 +126,7 @@ class _HematologiAddSpeciesState extends State<HematologiAddSpecies> {
     return Scaffold(
         body: Stack(
       children: [
-        Image.asset('images/marine_mollusca.png', scale: 2.5),
+        Container(height: double.infinity, color: Colors.blue,),
         Column(
           children: [
             const SizedBox(height: 40),
@@ -278,6 +277,7 @@ class _HematologiAddSpeciesState extends State<HematologiAddSpecies> {
                                   ],
                                 )
                             ),
+                          const SizedBox(height: 20),
                           reusableTextField('Kunci Identifikasi (Opsional)', identificationKey),
                           const SizedBox(height: 40),
                           Center(

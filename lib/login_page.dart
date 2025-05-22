@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/forgot_password.dart';
 import 'package:hematologi/home/home_page.dart';
 import 'package:hematologi/signup_page.dart';
 
@@ -64,7 +65,8 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage('images/blue_gradient.png'),
-                        fit: BoxFit.cover)),
+                        fit: BoxFit.cover)
+                ),
                 child: Container(
                   width: double.infinity,
                   margin:
@@ -153,8 +155,17 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       Container(
                           margin: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextField(
+                          child: TextFormField(
                             controller: _emailTextController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Tolong masukkan email';
+                              }
+                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                return 'Tolong masukkan alamat email yang valid';
+                              }
+                              return null;
+                            },
                             style: GoogleFonts.inter(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
@@ -189,8 +200,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       Container(
                           margin: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextField(
+                          child: TextFormField(
                             controller: _passwordTextController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Tolong masukkan email';
+                              }
+                              return null;
+                            },
                             style: GoogleFonts.inter(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
@@ -220,7 +237,11 @@ class _LoginPageState extends State<LoginPage> {
                       Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => const ForgotPassword())
+                                );
+                              },
                               child: Text('Lupa kata sandi?',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.poppins(

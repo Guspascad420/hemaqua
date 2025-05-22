@@ -84,15 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Center(
                   child: Column(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        width: 70,
-                        height: 70,
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.blue
-                        ),
-                      ),
+                      Image.asset('images/logo_blue.png', scale: 2.5),
                       const SizedBox(height: 15),
                       Text('Sign Up',
                           style: GoogleFonts.poppins(

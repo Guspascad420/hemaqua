@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hematologi/home/guest_home_page.dart';
 import 'package:hematologi/home/home_page.dart';
 import 'package:hematologi/onboarding/onboarding_page.dart';
 import 'firebase_options.dart';
@@ -19,14 +20,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var auth = FirebaseAuth.instance;
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
       ),
-      home: auth.currentUser != null ? const HomePage() : const OnboardingPage()
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final User? user = snapshot.data;
+            if (user != null && user.isAnonymous) {
+              return const GuestHomePage();
+            } else if (user != null && !user.isAnonymous) {
+              return const HomePage();
+            }
+          }
+          return const OnboardingPage();
+        },
+      ),
     );
   }
 }

@@ -23,7 +23,7 @@ class _EditProfileState extends State<EditProfile> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFEFF6FF),
         centerTitle: true,
-        title: Text('Edit Profile',
+        title: Text('Edit Profil',
             style: GoogleFonts.poppins(
                 fontSize: 21,
                 color: Colors.blue,
@@ -70,7 +70,7 @@ class _EditProfileState extends State<EditProfile> {
             ),
             Container(
               margin: const EdgeInsets.only(top: 15),
-              child: Text('Institution',
+              child: Text('Institusi',
                   style: GoogleFonts.poppins(
                       fontSize: 15,
                       fontWeight: FontWeight.w500
@@ -153,7 +153,7 @@ class _EditProfileState extends State<EditProfile> {
             ),
             Container(
               margin: const EdgeInsets.only(top: 15),
-              child: Text('Date of birth',
+              child: Text('Tanggal lahir',
                   style: GoogleFonts.poppins(
                       color: Colors.grey[600],
                       fontSize: 15,
@@ -221,7 +221,7 @@ class _EditProfileState extends State<EditProfile> {
                                 borderRadius: BorderRadius.all(Radius.circular(20))
                             )
                         ),
-                        child: Text('Save',
+                        child: Text('Simpan',
                             style: GoogleFonts.poppins(
                                 fontSize: 18,
                                 color: Colors.white,
