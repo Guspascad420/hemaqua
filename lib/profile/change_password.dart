@@ -116,7 +116,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 child: Container(
                     width: double.infinity,
                     height: 60,
-                    margin: const EdgeInsets.symmetric(horizontal: 70, vertical: 10),
+                    margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.15, vertical: 10),
                     child: ElevatedButton(
                         onPressed: () {
                           _changePassword(currentPassword: _currentPasswordTextController.text,
@@ -127,10 +127,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20))
+                                borderRadius: BorderRadius.all(Radius.circular(15))
                             )
                         ),
-                        child: Text('Ubah password',
+                        child: Text('Tetapkan kata sandi',
                             style: GoogleFonts.poppins(
                                 fontSize: 18,
                                 color: Colors.white,

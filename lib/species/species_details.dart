@@ -1,30 +1,26 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/database/database_service.dart';
 import 'package:hematologi/models/species.dart';
 
-class SpeciesDetails extends StatefulWidget {
+import '../provider/providers.dart';
+
+class SpeciesDetails extends ConsumerStatefulWidget {
   const SpeciesDetails({super.key, required this.species,
-    this.addSpeciesToCart, required this.station,
-    required this.isFavoriteSpecies, required this.showBottomNav,
-    this.removeSpeciesFromFavorite});
+    required this.station,
+    required this.isFavoriteSpecies, required this.showBottomNav});
 
   final int station;
   final bool isFavoriteSpecies;
   final bool showBottomNav;
-  final void Function(Species)? addSpeciesToCart;
-  final void Function(Map<String, dynamic>)? removeSpeciesFromFavorite;
   final Species species;
 
   @override
-  State<SpeciesDetails> createState() => _SpeciesDetailsState();
+  ConsumerState<SpeciesDetails> createState() => _SpeciesDetailsState();
 }
 
-class _SpeciesDetailsState extends State<SpeciesDetails> {
+class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
 
-  DatabaseService service = DatabaseService();
-  FirebaseAuth auth = FirebaseAuth.instance;
   bool _isFavorite = false;
 
   void _showSnackBar(BuildContext context, String textContent, MaterialColor backgroundColor) {
@@ -37,7 +33,8 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
   }
 
   void _addSpeciesToFavorite() {
-    service.addSpeciesToFavorite(widget.species, auth.currentUser!.uid);
+    final uid = ref.read(authStateProvider).asData?.value?.uid;
+    ref.read(databaseServiceProvider).addSpeciesToFavorite(widget.species, uid!);
     setState(() {
       _isFavorite = !_isFavorite;
     });
@@ -45,10 +42,8 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
   }
 
   void _removeSpeciesFromFavorite() {
-    if (widget.removeSpeciesFromFavorite != null) {
-      widget.removeSpeciesFromFavorite!(widget.species.toMap());
-    }
-    service.removeSpeciesFromFavorite(widget.species, auth.currentUser!.uid);
+    final uid = ref.read(authStateProvider).asData?.value?.uid;
+    ref.read(databaseServiceProvider).removeSpeciesFromFavorite(widget.species, uid!);
     setState(() {
       _isFavorite = !_isFavorite;
     });
@@ -57,13 +52,15 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _isFavorite = widget.isFavoriteSpecies;
   }
 
   @override
   Widget build(BuildContext context) {
+    final hematologiCartList = ref.watch(hematologiCartListProvider);
+    final hemositCartList = ref.watch(hemositCartListProvider);
+
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
@@ -92,7 +89,22 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
       ),
       bottomNavigationBar: !widget.showBottomNav ? null : GestureDetector(
           onTap: () {
-            widget.addSpeciesToCart!(widget.species);
+            final uid = ref.read(authStateProvider).asData?.value?.uid;
+            bool itemAdded = false; // Flag untuk nandain kalo ada item yg ditambah
+
+            if (widget.species.type == "fish" && hematologiCartList.isEmpty) {
+              ref.read(databaseServiceProvider).addSpeciesToHematologiCart(widget.species, uid!);
+              itemAdded = true;
+            } else if (widget.species.type == "molluscs" && hemositCartList.isEmpty) {
+              ref.read(databaseServiceProvider).addSpeciesToHemositCart(widget.species, uid!);
+              itemAdded = true;
+            }
+
+            if (itemAdded) {
+              _showSnackBar(context, 'Spesies berhasil ditambahkan', Colors.green);
+            } else {
+              _showSnackBar(context, 'Keranjang sudah terisi, tidak bisa menambah lagi.', Colors.orange);
+            }
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 22),
@@ -156,7 +168,7 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                                           fontWeight: FontWeight.w500
                                       )),
                                   Visibility(
-                                      visible: widget.removeSpeciesFromFavorite != null,
+                                      visible: ref.read(authStateProvider).asData?.value?.uid != null,
                                       child: Container(
                                           margin: const EdgeInsets.only(right: 10),
                                           child: IconButton(
@@ -201,6 +213,7 @@ class _SpeciesDetailsState extends State<SpeciesDetails> {
                                     color: Colors.grey,
                                     fontSize: 15,
                                   )),
+                              const SizedBox(height: 20),
                             ],
                           ),
                         ),

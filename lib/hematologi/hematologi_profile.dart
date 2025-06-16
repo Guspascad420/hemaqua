@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/hematologi/hematologi_add_species.dart';
 import 'package:hematologi/hematologi/hematologi_species_list.dart';
 import 'package:hematologi/station_selection.dart';
 
@@ -42,7 +41,7 @@ class HematologiProfile extends StatelessWidget {
         children: [
           const SizedBox(height: 80),
           Center(
-            child: Image.asset('images/group_42311.png', scale: 2.3),
+            child: Image.asset('images/group_42311.png', scale: 2.5),
           ),
           const SizedBox(height: 20),
           Text('Profil Hematologi',
@@ -63,7 +62,7 @@ class HematologiProfile extends StatelessWidget {
                   ))
           )
         ],
-      )
+      ),
     );
   }
 

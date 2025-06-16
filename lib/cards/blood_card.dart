@@ -8,7 +8,7 @@ Widget bloodCard(BuildContext context, Species species) {
       onTap: () {
         Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => SpeciesDetails(species: species,
-                station: 1, isFavoriteSpecies: false, showBottomNav: true, addSpeciesToCart: (Species) {}))
+                station: 1, isFavoriteSpecies: false, showBottomNav: true))
         );
       },
       child: Container(

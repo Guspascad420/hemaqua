@@ -69,12 +69,14 @@ class _CalculationResultState extends State<CalculationResult> {
                             color: Colors.grey[700],
                             fontWeight: FontWeight.w500
                         )),
-                    Text("${widget.result}",
-                        style: GoogleFonts.poppins(
-                            fontSize: 78,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold
-                        )),
+                    FittedBox(
+                      child: Text("${widget.result}",
+                          style: GoogleFonts.poppins(
+                              fontSize: 78,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold
+                          ))
+                    ),
                     const SizedBox(height: 15),
                     Text('Status hasil: ${widget.resultStatus}',
                         textAlign: TextAlign.center,

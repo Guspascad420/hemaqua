@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hematologi/hemosit/hemosit_add_species.dart';
 import 'package:hematologi/hemosit/hemosit_species_list.dart';
 import 'package:hematologi/station_selection.dart';
 
@@ -40,7 +39,7 @@ class HemositProfile extends StatelessWidget {
         children: [
           const SizedBox(height: 80),
           Center(
-            child: Image.asset('images/group_42312.png', scale: 2.3),
+            child: Image.asset('images/group_42312.png', scale: 2.5),
           ),
           const SizedBox(height: 20),
           Text('Profil Hemosit',

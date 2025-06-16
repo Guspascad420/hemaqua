@@ -1,4 +1,3 @@
-import 'dart:math';
 
 class WaterPollutionIndex {
   static double calculateWQI(Map<String, double> testValues, {double? naturalTemp}) {

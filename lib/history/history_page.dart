@@ -1,62 +1,49 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hematologi/hematologi_results.dart';
 import 'package:hematologi/hemosit/hemosit_results.dart';
 import 'package:hematologi/models/species.dart';
+import 'package:hematologi/water%20quality/wq_outputs.dart';
 
-import '../database/database_service.dart';
+import '../provider/providers.dart';
+import '../water quality/wq_calculation.dart';
 
-class HistoryPage extends StatefulWidget {
-  final List<Map<String, dynamic>> calculationResults;
-  final void Function(Map<String, dynamic>) removeCalculationResult;
+class HistoryPage extends ConsumerWidget {
   final String category;
+  const HistoryPage({super.key, required this.category});
 
-  const HistoryPage({super.key, required this.category, required this.calculationResults, required this.removeCalculationResult});
+  Future<void> _showDeleteDialog(BuildContext context, Map<String, dynamic> speciesData, WidgetRef ref) async {
+    final uid = ref.read(authStateProvider).asData?.value?.uid;
+    if (uid == null) return;
 
-
-  @override
-  State<HistoryPage> createState() => _HistoryPageState();
-}
-
-class _HistoryPageState extends State<HistoryPage> {
-
-  DatabaseService service = DatabaseService();
-  FirebaseAuth auth = FirebaseAuth.instance;
-  List<Map<String, dynamic>> _calculationResults = [];
-
-  Future<void> _showDeleteDialog(BuildContext context, Map<String, dynamic> species) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
           content: Text(
-            "Apakah kamu yakin untuk menghapus item ini?",
-            style: GoogleFonts.poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.w500
-            )
+              "Apakah kamu yakin untuk menghapus item ini?",
+              style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500
+              )
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(), // Cancel action
+              onPressed: () => Navigator.of(context).pop(),
               child: Text(
                   "Batal",
                   style: GoogleFonts.poppins(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500
                   )
-                ),
+              ),
             ),
             TextButton(
               onPressed: () {
-                widget.removeCalculationResult(species);
-                setState(() {
-                  _calculationResults.remove(species);
-                });
-                service.removeCalculationResult(species, auth.currentUser!.uid);
+                ref.read(databaseServiceProvider).removeCalculationResult(speciesData, uid);
                 Navigator.of(context).pop();
               },
               child: Text("Hapus", style: GoogleFonts.poppins(fontSize: 15,
@@ -68,19 +55,86 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _calculationResults = widget.calculationResults;
+  void _navigateToResultDetail(BuildContext context, Map<String, dynamic> result) {
+    Species? species;
+    Map<String, dynamic> calculationParams = {};
+
+    final String type = result['type'];
+
+    if (type == 'fish' || type == 'molluscs') {
+      species = Species.fromCalculationResultMap(result);
+
+      if (type == 'fish') {
+        calculationParams = {
+          'Eritrosit': (result['eritrosit'] as num).toDouble(),
+          'Leukosit': (result['leukosit'] as num).toDouble(),
+          "Hematokrit": (result['hematokrit'] as num).toDouble(),
+          "Hemoglobin": (result['hemoglobin'] as num).toDouble(),
+          "Mikronuklei": (result['mikronuklei'] as num).toDouble(),
+          "Limfosit": (result['limfosit'] as num).toDouble(),
+          "Monosit": (result['monosit'] as num).toDouble(),
+          "Neutrofil": (result['neutrofil'] as num).toDouble()
+        };
+      } else { // type == 'molluscs'
+        calculationParams = {
+          'THC': (result['thc'] as num).toDouble(),
+          'Hyalin': (result['hyalin'] as num).toDouble(),
+          'Granular': (result['granular'] as num).toDouble(),
+          'Semi Granular': (result['semi_granular'] as num).toDouble(),
+        };
+      }
+    } else {
+      calculationParams = {
+        'pollution_index': (result['pollution_index'] as num).toDouble(),
+        'station': (result['station'] as num).toInt(),
+      };
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) {
+        if (type == 'fish') {
+          return HematologiResults(
+            calculationResults: calculationParams,
+            species: species!, // Aman pakai ! karena sudah pasti diisi jika type 'fish'
+            station: result['station'],
+            showBottomNav: false,
+          );
+        } else if (type == 'molluscs') {
+          return HemositResults(
+            calculationResults: calculationParams,
+            species: species!, // Aman pakai ! karena sudah pasti diisi jika type 'molluscs'
+            station: result['station'],
+            showBottomNav: false,
+          );
+        } else { // 'water quality'
+          return WaterQualityOutputs(
+            wqi: result['pollution_index'],
+            station: result['station'],
+            resultStatus: WaterPollutionIndex.pollutionCategory(
+                result["pollution_index"]
+            ),
+            copywriteText: WaterPollutionIndex.getCopywritingBasedOnCategory(
+                result["pollution_index"]
+            ),
+            showSaveButton: false,
+          );
+        }
+      }),
+    );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFEFF6FF),
-      appBar: widget.calculationResults.isEmpty
-          ? null : AppBar(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncAllResults = ref.watch(calculationResultsProvider);
+
+    return asyncAllResults.when(
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
+      data: (allResults) {
+        final filteredResults = allResults.where((result) => result['type'] == category).toList();
+        return Scaffold(
+          backgroundColor: const Color(0xFFEFF6FF),
+          appBar: AppBar(
             backgroundColor: const Color(0xFFEFF6FF),
             leading: Container(
                 decoration: BoxDecoration(
@@ -114,7 +168,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 decoration: InputDecoration(
                   hintText: "Cari...",
                   hintStyle: GoogleFonts.poppins(
-                      fontSize: 15,
+                    fontSize: 15,
                   ),
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   border: InputBorder.none,
@@ -122,145 +176,119 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
               ),
             ),
-        ),
-      body: _calculationResults.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('images/dead_fish.png', scale: 2.3),
-                  const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(horizontal: 50),
-                    child: Text('Tidak ada riwayat yang tersedia',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                            fontSize: 21,
-                            fontWeight: FontWeight.bold
-                        ))
-                  ),
-                  const SizedBox(height: 50),
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: _calculationResults.length,
-              itemBuilder: (context, index) {
-                Species species = Species.fromCalculationResultMap(widget.calculationResults[index]);
-                var calculationResults = widget.calculationResults[index]['type'] == 'fish'
-                 ? {
-                    'Eritrosit': (widget.calculationResults[index]['eritrosit'] as num).toDouble(),
-                    'Leukosit': (widget.calculationResults[index]['leukosit'] as num).toDouble(),
-                    "Hematokrit": (widget.calculationResults[index]['hematokrit'] as num).toDouble(),
-                    "Hemoglobin": (widget.calculationResults[index]['hemoglobin'] as num).toDouble(),
-                    "Mikronuklei": (widget.calculationResults[index]['mikronuklei'] as num).toDouble(),
-                    "Limfosit": (widget.calculationResults[index]['limfosit'] as num).toDouble(),
-                    "Monosit": (widget.calculationResults[index]['monosit'] as num).toDouble(),
-                    "Neutrofil": (widget.calculationResults[index]['neutrofil'] as num).toDouble()
-                   }
-                 : {
-                    'THC': (widget.calculationResults[index]['thc'] as num).toDouble(),
-                    'Hyalin': (widget.calculationResults[index]['hyalin'] as num).toDouble(),
-                    'Granular': (widget.calculationResults[index]['granular'] as num).toDouble(),
-                    'Semi Granular': (widget.calculationResults[index]['semi_granular'] as num).toDouble(),
-                   };
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) =>
-                      widget.calculationResults[index]['type'] == 'fish'
-                          ? HematologiResults(
-                              calculationResults: calculationResults, species: species,
-                              station: widget.calculationResults[index]['station'],
-                              showBottomNav: false
-                            )
-                          : HemositResults(
-                              calculationResults: calculationResults,
-                              species: species,
-                              station: widget.calculationResults[index]['station'],
-                              showBottomNav: false
-                            )
+          ),
+          body: filteredResults.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('images/dead_fish.png', scale: 2.3),
+                      const SizedBox(height: 10),
+                      Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.symmetric(horizontal: 50),
+                          child: Text('Tidak ada riwayat yang tersedia',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold
+                              ))
                       ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 20, right: 20, top: 15),
-                    padding: const EdgeInsets.all(20),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: Colors.white,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
+                      const SizedBox(height: 50),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: filteredResults.length,
+                  itemBuilder: (context, index) {
+                    final result = filteredResults[index];
+                    return GestureDetector(
+                        onTap: () {
+                          _navigateToResultDetail(context, result);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 20, right: 20, top: 15),
+                          padding: const EdgeInsets.all(20),
                           decoration: const BoxDecoration(
-                              color: Color(0xFFF4FBFF),
-                              borderRadius: BorderRadius.all(Radius.circular(20))
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            color: Colors.white,
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-                          child: Image.network(widget.calculationResults[index]['image_url'], scale: 2.5),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(widget.calculationResults[index]['name'],
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.blue,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500
-                                    )),
-                                const SizedBox(height: 4),
-                                Text(widget.calculationResults[index]['latin_name'],
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.grey,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500
-                                    ),
-                                    softWrap: true,  // Ensure wrapping is enabled
-                                    maxLines: 2,     // Optional: Limit to 2 lines
-                                    overflow: TextOverflow.ellipsis),
-                                const SizedBox(height: 25),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.location_on, color: Colors.blue, size: 30),
-                                        const SizedBox(width: 4),
-                                        Text("Stasiun ${widget.calculationResults[index]['station']}",
+                          child: Row(
+                            children: [
+                              if (category != "water quality")...[
+                                Container(
+                                  decoration: const BoxDecoration(
+                                      color: Color(0xFFF4FBFF),
+                                      borderRadius: BorderRadius.all(Radius.circular(20))
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                                  margin: const EdgeInsets.only(right: 15),
+                                  child: Image.network(result['image_url'],
+                                      width: MediaQuery.of(context).size.width * 0.3),
+                                )
+                              ],
+                              Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(result['name'] ?? result["date"],
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.blue,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w500
+                                          )),
+                                      const SizedBox(height: 4),
+                                      if (result['latin_name'] != null)
+                                        Text(result['latin_name'],
                                             style: GoogleFonts.poppins(
                                                 color: Colors.grey,
-                                                fontSize: 14,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.w500
-                                            )),
-                                      ],
-                                    ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFF4FBFF),
-                                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                                            ),
+                                            softWrap: true,  // Ensure wrapping is enabled
+                                            maxLines: 2,     // Optional: Limit to 2 lines
+                                            overflow: TextOverflow.ellipsis),
+                                      const SizedBox(height: 25),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.location_on, color: Colors.blue, size: 30),
+                                              const SizedBox(width: 4),
+                                              Text("Stasiun ${result['station']}",
+                                                  style: GoogleFonts.poppins(
+                                                      color: Colors.grey,
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500
+                                                  )),
+                                            ],
+                                          ),
+                                          Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFFF4FBFF),
+                                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                                            ),
+                                            child: IconButton(
+                                                onPressed: () {
+                                                  _showDeleteDialog(context, result, ref);
+                                                },
+                                                icon: const Icon(Icons.delete_outline, color: Colors.red,)
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      child: IconButton(
-                                          onPressed: () {
-                                            _showDeleteDialog(context, widget.calculationResults[index]);
-                                          },
-                                          icon: const Icon(Icons.delete_outline, color: Colors.red,)
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            )
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),
                         )
-                      ],
-                    ),
-                  )
-                );
-              },
-            ),
+                    );
+                  },
+          ),
+        );
+      }
     );
   }
 

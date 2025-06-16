@@ -16,13 +16,6 @@ class MolluskGalleryPage extends StatefulWidget {
 class _MolluskGalleryPageState extends State<MolluskGalleryPage>  {
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
-  late Future<List<Species>> futureMolluskList;
-
-  @override
-  void initState() {
-    super.initState();
-    futureMolluskList = service.retrieveMolluscs();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +52,8 @@ class _MolluskGalleryPageState extends State<MolluskGalleryPage>  {
                 fontWeight: FontWeight.w600
             )),
       ),
-        body: FutureBuilder(
-            future: futureMolluskList,
+        body: StreamBuilder<List<Species>>(
+            stream: service.retrieveMolluscs(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
@@ -68,14 +61,13 @@ class _MolluskGalleryPageState extends State<MolluskGalleryPage>  {
                 return const Text('Mohon cek koneksi internet kamu');
               }
               var molluskList = snapshot.data!;
-              print(molluskList[0].image_url);
               return SingleChildScrollView(
                   child: StaticGrid(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       gap: 20,
                       children: [
                         for(var mollusk in molluskList)
-                          speciesCard(context, mollusk),
+                          speciesCard(context, mollusk, false),
                       ]
                   )
               );

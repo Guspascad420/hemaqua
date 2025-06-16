@@ -13,7 +13,7 @@ class HematologiResults extends StatelessWidget {
   final int station;
   final Species species;
   final bool showBottomNav;
-  final Map<String, double> calculationResults;
+  final Map<String, dynamic> calculationResults;
 
   const HematologiResults({super.key, required this.calculationResults,
     required this.species, required this.station, required this.showBottomNav});

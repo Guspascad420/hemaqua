@@ -28,7 +28,7 @@ class _AddDataState extends State<AddData> {
                 fontWeight: FontWeight.w600
             )),
       ),
-      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 1, user: {},),
+      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 1, user: const {},),
       body: Column(
         children: [
           GestureDetector(
@@ -46,7 +46,7 @@ class _AddDataState extends State<AddData> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
                 children: [
-                  Image.asset('images/fish3.png', scale: 2.5),
+                  Image.asset('images/fish3.png', scale: 3),
                   const SizedBox(width: 15),
                   Text('Data Hematologi',
                       style: GoogleFonts.poppins(
@@ -73,7 +73,7 @@ class _AddDataState extends State<AddData> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               child: Row(
                 children: [
-                  Image.asset('images/shell.png', scale: 2.5),
+                  Image.asset('images/shell.png', scale: 3),
                   const SizedBox(width: 15),
                   Text('Data Hemosit',
                       style: GoogleFonts.poppins(
@@ -100,7 +100,7 @@ class _AddDataState extends State<AddData> {
                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 child: Row(
                   children: [
-                    Image.asset('images/testing_wq2.png', scale: 1.7),
+                    Image.asset('images/testing_wq2.png', scale: 2),
                     const SizedBox(width: 15),
                     Text('Kualitas Air',
                         style: GoogleFonts.poppins(

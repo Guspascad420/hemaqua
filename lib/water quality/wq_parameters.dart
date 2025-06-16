@@ -64,6 +64,27 @@ class _WaterQualityParametersState extends State<WaterQualityParameters> {
   }
 
   @override
+  void dispose() {
+    ph.dispose();
+    DO.dispose();
+    bod.dispose();
+    cod.dispose();
+    nitrat.dispose();
+    nitrit.dispose();
+    amonia.dispose();
+    fosfat.dispose();
+    tds.dispose();
+    tss.dispose();
+    merkuri.dispose();
+    fenol.dispose();
+    sulfat.dispose();
+    timbal.dispose();
+    tembaga.dispose();
+    kromium.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: GestureDetector(

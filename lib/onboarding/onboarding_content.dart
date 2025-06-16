@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Widget onboardingContent(String imageRes, String title, String content,
+Widget onboardingContent(String imageRes, String title, double screenHeight, String content,
     bool isLastPage, [void Function()? onButtonPressed, void Function()? onLoginAsGuest]) {
   return Column(
     children: [
-      const SizedBox(height: 80),
-      Image.asset(imageRes, scale: 2.5),
-      const SizedBox(height: 20),
+      SizedBox(height: 80.h),
+      Image.asset(imageRes, width: 300.w),
+      SizedBox(height: 20.h),
       Container(
-        margin: const EdgeInsets.symmetric(horizontal: 15),
+        margin: EdgeInsets.symmetric(horizontal: 15.w),
         child: Text(title, textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-                fontSize: 27, color: const Color(0xFF3B82F6), fontWeight: FontWeight.w500
+                fontSize: 26.sp, color: const Color(0xFF3B82F6), fontWeight: FontWeight.w500
+            ))
+      ),
+      SizedBox(height: 10.h),
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 10.w),
+        child: Text(content, textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+                fontSize: 14.sp, fontWeight: FontWeight.w500
             ))
       ),
       const SizedBox(height: 20),
-      Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        child: Text(content, textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-                fontSize: 17, fontWeight: FontWeight.w500
-            ))
-      ),
-      const SizedBox(height: 70),
       isLastPage
           ? Column(
               children: [
@@ -39,7 +40,7 @@ Widget onboardingContent(String imageRes, String title, String content,
                             padding: const EdgeInsets.symmetric(vertical: 12)),
                         child: Text('Mulai',
                             style: GoogleFonts.inter(
-                                fontSize: 18,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white
                             ))
@@ -65,7 +66,7 @@ Widget onboardingContent(String imageRes, String title, String content,
 
                         child: Text('Masuk sebagai tamu',
                             style: GoogleFonts.inter(
-                                fontSize: 18,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue
                             ))
@@ -73,7 +74,7 @@ Widget onboardingContent(String imageRes, String title, String content,
                 ),
               ],
             )
-          : const SizedBox()
+          : const SizedBox(),
     ],
   );
 }

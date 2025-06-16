@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/components/reusable_back_button.dart';
 
 class HelpCenter extends StatefulWidget {
   const HelpCenter({super.key});
@@ -24,6 +25,7 @@ class _HelpCenterState extends State<HelpCenter> {
                 color: Colors.blue,
                 fontWeight: FontWeight.w600
             )),
+        leading: const ReusableBackButton(),
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -55,7 +57,7 @@ class _HelpCenterState extends State<HelpCenter> {
                     filled: true,
                     contentPadding: const EdgeInsets.only(left: 20, top: 10),
                     fillColor: Colors.white,
-                    hintText: 'Write your message',
+                    hintText: 'Tulis pesan anda',
                     hintStyle: GoogleFonts.poppins(
                         color: Colors.grey,
                         fontWeight: FontWeight.w500,
@@ -80,7 +82,7 @@ class _HelpCenterState extends State<HelpCenter> {
                             borderRadius: BorderRadius.all(Radius.circular(20))
                         )
                     ),
-                    child: Text('Send Message',
+                    child: Text('Kirim pesan',
                         style: GoogleFonts.poppins(
                             fontSize: 18,
                             color: Colors.white,

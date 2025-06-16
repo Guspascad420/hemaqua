@@ -28,7 +28,7 @@ class BottomNavBar extends StatelessWidget {
     } else if (index == 2 && currentIndex != 2) {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-              builder: (context) => ProfilePage()
+              builder: (context) => const ProfilePage()
           )
       );
     }

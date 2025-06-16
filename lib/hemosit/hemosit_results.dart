@@ -10,7 +10,7 @@ import '../models/species.dart';
 import '../parameter_box.dart';
 
 class HemositResults extends StatelessWidget {
-  final Map<String, double> calculationResults;
+  final Map<String, dynamic> calculationResults;
   final Species species;
   final bool showBottomNav;
   final int station;

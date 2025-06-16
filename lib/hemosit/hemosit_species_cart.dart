@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/cards/species_card3.dart';
 import 'package:hematologi/hemosit/hemosit_parameters.dart';
+import 'package:hematologi/provider/providers.dart';
 
 import '../models/species.dart';
 
-class HemositSpeciesCart extends StatefulWidget {
-  final List<Species> speciesInCart;
+class HemositSpeciesCart extends ConsumerWidget {
+  const HemositSpeciesCart({super.key, required this.station});
+
   final int station;
-  final void Function(Species) removeSpeciesFromCart;
 
-  const HemositSpeciesCart({super.key, required this.speciesInCart,
-    required this.removeSpeciesFromCart, required this.station});
+  void _showSnackBar(BuildContext context, String textContent, MaterialColor backgroundColor) {
+    SnackBar snackBar = SnackBar(
+      content: Text(textContent),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _removeSpeciesFromCart(BuildContext context, Species species, WidgetRef ref) {
+    ref.read(databaseServiceProvider).removeSpeciesFromHematologiCart(species,
+        ref.read(authStateProvider).asData!.value!.uid);
+    _showSnackBar(context, 'Berhasil menghapus spesies', Colors.blue);
+  }
 
   @override
-  State<HemositSpeciesCart> createState() => _HemositSpeciesCartState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<Species> speciesList = ref.watch(hemositCartListProvider);
 
-class _HemositSpeciesCartState extends State<HemositSpeciesCart> {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: widget.speciesInCart.isEmpty ? null : GestureDetector(
+        bottomNavigationBar: speciesList.isEmpty ? null : GestureDetector(
             onTap: () {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => HemositParameters(
-                      species: widget.speciesInCart[0], station: widget.station
+                      species: speciesList[0], station: station
                   ))
               );
             },
@@ -73,7 +84,7 @@ class _HemositSpeciesCartState extends State<HemositSpeciesCart> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                widget.speciesInCart.isEmpty
+                speciesList.isEmpty
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -93,7 +104,8 @@ class _HemositSpeciesCartState extends State<HemositSpeciesCart> {
                               )),
                         ],
                     )
-                    : speciesCard3(widget.speciesInCart[0], widget.station, widget.removeSpeciesFromCart)
+                    : speciesCard3(context, ref, speciesList[0], station, MediaQuery.of(context).size.width * 0.3,
+                    _removeSpeciesFromCart)
               ],
             )
         )

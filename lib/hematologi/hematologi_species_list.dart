@@ -1,80 +1,24 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hematologi/hematologi_add_species.dart';
 import 'package:hematologi/hematologi/hematologi_species_cart.dart';
 import 'package:hematologi/static_grid.dart';
 import '../cards/species_card2.dart';
-import '../database/database_service.dart';
 import '../models/species.dart';
 import 'package:collection/collection.dart';
 
-class HematologiSpeciesList extends StatefulWidget {
+import '../provider/providers.dart';
+
+class HematologiSpeciesList extends ConsumerWidget {
   final int station;
 
   const HematologiSpeciesList({super.key, required this.station});
 
   @override
-  State<HematologiSpeciesList> createState() => _HematologiSpeciesListState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<Species> favoriteSpeciesList = ref.watch(favoriteSpeciesListProvider);
 
-class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
-
-  DatabaseService service = DatabaseService();
-  late Future<List<Species>> futureFishList;
-  FirebaseAuth auth = FirebaseAuth.instance;
-
-  List<Species> _speciesInCart = [];
-  List<Species> _favoriteSpeciesList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-    futureFishList = service.retrieveFishes();
-  }
-
-  void _showSnackBar(BuildContext context, String textContent, MaterialColor backgroundColor) {
-    SnackBar snackBar = SnackBar(
-      content: Text(textContent),
-      backgroundColor: backgroundColor,
-      behavior: SnackBarBehavior.floating,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void _addSpeciesToCart(Species species) {
-    setState(() {
-      if (_speciesInCart.isEmpty) {
-        service.addSpeciesToCart(species, auth.currentUser!.uid, 'hematologi_species_in_cart');
-        _speciesInCart.add(species);
-        _showSnackBar(context, 'Berhasil menambahkan spesies', Colors.blue);
-      } else {
-        _showSnackBar(context, 'Ikan sudah ditambahkan', Colors.red);
-      }
-    });
-  }
-
-  void _removeSpeciesFromCart(Species species) {
-    setState(() {
-      service.removeSpeciesFromCart(species, auth.currentUser!.uid, 'hematologi_species_in_cart');
-      _speciesInCart.remove(species);
-    });
-    _showSnackBar(context, 'Berhasil menghapus spesies', Colors.blue);
-  }
-
-  Future<void> _loadUserData() async {
-    Map<String, dynamic> userData = await service.retrieveUserData(auth.currentUser!.uid);
-    List<Map<String, dynamic>> favoriteSpeciesData = (userData["favorite_species"] as List).map((e) => Map<String, dynamic>.from(e)).toList();
-    print(favoriteSpeciesData[0]);
-    setState(() {
-      _favoriteSpeciesList.addAll(favoriteSpeciesData.map((e) => Species.fromMap(e)));
-      _speciesInCart.add(Species.fromMap(userData["hematologi_species_in_cart"][0]));
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4FBFF),
       appBar: AppBar(
@@ -120,8 +64,7 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
               child: IconButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HematologiSpeciesCart(speciesInCart: _speciesInCart,
-                        removeSpeciesFromCart: _removeSpeciesFromCart, station: widget.station))
+                      MaterialPageRoute(builder: (context) => HematologiSpeciesCart(station: station))
                   );
                 },
                 icon: const Icon(Icons.shopping_cart, color: Colors.blue),
@@ -136,14 +79,10 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
             )),
       ),
         bottomNavigationBar: GestureDetector(
-            onTap: () async {
-              await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => HematologiAddSpecies(station: widget.station))
+            onTap: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => HematologiAddSpecies(station: station))
               );
-              setState(() {
-                _loadUserData();
-                futureFishList = service.retrieveFishes();
-              });
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 22),
@@ -153,8 +92,8 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
                       fontSize: 20, color: Colors.white)),
             )
         ),
-      body: FutureBuilder(
-        future: futureFishList,
+      body: StreamBuilder<List<Species>>(
+        stream: ref.read(databaseServiceProvider).retrieveFishes(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -162,7 +101,7 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
             return const Text('Mohon cek koneksi internet kamu');
           }
           var fishList = snapshot.data!;
-          fishList = fishList.where((fish) => fish.stations!.contains(widget.station))
+          fishList = fishList.where((fish) => fish.stations!.contains(station))
               .toList();
           return SingleChildScrollView(
             child: StaticGrid(
@@ -170,8 +109,8 @@ class _HematologiSpeciesListState extends State<HematologiSpeciesList> {
                 gap: 20,
                 children: [
                   for(var fish in fishList)
-                    speciesCard2(context, fish, widget.station,
-                        _favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false, _addSpeciesToCart),
+                    speciesCard2(context, fish, station,
+                        favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false),
                 ]
             )
           );

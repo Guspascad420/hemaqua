@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hemaqua_team.dart';
-import 'package:hematologi/home/guest_home_page.dart';
+import 'package:hematologi/guest/guest_main_page.dart';
 import 'package:hematologi/login_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:hematologi/onboarding/onboarding_content.dart';
@@ -18,29 +19,23 @@ class OnboardingPage extends StatefulWidget {
 
 class _OnboardingPageState extends State<OnboardingPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _isLoading = false;
   int _currentPage = 0;
   final PageController controller = PageController();
 
   Future<void> _signInAnonymously() async {
-    setState(() {
-      _isLoading = true;
-    });
 
     try {
       UserCredential userCredential = await _auth.signInAnonymously();
       User? user = userCredential.user;
 
       if (user != null) {
-        print("Signed in anonymously. UID: ${user.uid}");
         // Navigate to your main app content
         // Example:
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const GuestHomePage()),
+          MaterialPageRoute(builder: (context) => const GuestMainPage()),
         );
       } else {
         // This case generally shouldn't happen if signInAnonymously succeeds
-        print("Anonymous sign-in failed: User is null.");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Gagal masuk sebagai tamu. Mohon coba lagi'),
@@ -63,17 +58,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       );
     } catch (e) {
-      print("Unexpected Error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An unexpected error occurred: $e'),
           backgroundColor: Colors.red,
         ),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -89,9 +79,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(bottom: 17, left: 10, right: 10),
+        padding: EdgeInsets.only(bottom: 17.h, left: 10.w, right: 10.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -103,7 +95,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 },
                 child: Text('Lewati',
                     style: GoogleFonts.poppins(
-                        fontSize: 16, color: const Color(0xFF4B5563)))),
+                        fontSize: 16.sp, color: const Color(0xFF4B5563)))),
             SmoothPageIndicator(
                 controller: controller,
                 count: 3,
@@ -114,14 +106,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
             _currentPage == 0 || _currentPage == 1
                 ? const Icon(Icons.arrow_forward, color: Colors.blue)
-                : const SizedBox(width: 22)
+                : SizedBox(width: 22.w)
           ],
         ),
       ),
       body: PageView(
         controller: controller,
         children: [
-          onboardingContent('images/med_research.png', 'Penilaian Komprehensif Kesehatan Air Sungai',
+          onboardingContent('images/med_research.png', 'Penilaian Komprehensif Kesehatan Air Sungai', screenHeight,
               'Aplikasi Analisis Profil Hematologi Ikan, Hemosit Gastropoda dan Kualitas Air untuk Menilai Kesehatan Perairan Sungai', false),
           onboardingTeamPage('images/researchers.png', 'Tim Kami', 'Aplikasi ini dibuat oleh Tim FPIK Universitas Brawijaya',
                   () {
@@ -130,7 +122,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     );
                   }
           ),
-          onboardingContent('images/med_research.png', 'Ayo Mulai!', 'Bersiap menjadi kontributor untuk analisis Profil Hematologi Ikan, Hemosit Gastropoda, dan Kualitas Air', true,
+          onboardingContent('images/med_research.png', 'Ayo Mulai!', screenHeight, 'Bersiap menjadi kontributor untuk analisis Profil Hematologi Ikan, Hemosit Gastropoda, dan Kualitas Air', true,
                   () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const LoginPage())

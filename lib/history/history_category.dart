@@ -1,43 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/components/reusable_back_button.dart';
 import 'package:hematologi/history/history_page.dart';
-import 'package:hematologi/history/wq_gallery_page.dart';
 import 'package:hematologi/static_grid.dart';
 
-class HistoryCategory extends StatelessWidget {
-  final List<Map<String, dynamic>> calculationResults;
-  final void Function(Map<String, dynamic>) removeCalculationResult;
+import '../provider/providers.dart';
 
-  const HistoryCategory({super.key, required this.calculationResults, required this.removeCalculationResult});
+class HistoryCategory extends ConsumerWidget {
+
+  const HistoryCategory({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncResults = ref.watch(calculationResultsProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4FBFF),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4FBFF),
         centerTitle: true,
-        leading: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF60A5FA).withOpacity(0.3),
-                  blurRadius: 3,
-                  offset: const Offset(0, 3), // Shadow position
-                ),
-              ],
-            ),
-            margin: const EdgeInsets.only(left: 20),
-            child: IconButton(
-              padding: const EdgeInsets.only(left: 7),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
-            )
-        ),
+        leading: const ReusableBackButton(),
         title: Text('Pilih Kategori',
             style: GoogleFonts.poppins(
                 fontSize: 21,
@@ -45,104 +29,101 @@ class HistoryCategory extends StatelessWidget {
                 fontWeight: FontWeight.w600
             )),
       ),
-      body: SingleChildScrollView(
-        child: StaticGrid(
-            padding: const EdgeInsets.all(20),
-            gap: 35,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  List<Map<String, dynamic>> fishCalculationResults = calculationResults.where((species) => species['type'] == 'fish').toList();
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HistoryPage(calculationResults: fishCalculationResults,
-                          category: 'fish', removeCalculationResult: removeCalculationResult))
-                  );
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Image.asset('images/fish3.png', scale: 2.3),
-                      const SizedBox(height: 10,),
-                      Text('Hematologi',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  List<Map<String, dynamic>> molluskCalculationResults = calculationResults.where((species) => species['type'] == 'molluscs').toList();
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HistoryPage(
-                          calculationResults: molluskCalculationResults,
-                          category: 'molluscs',
-                          removeCalculationResult: removeCalculationResult
-                      ))
-                  );
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
+      body: asyncResults.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => const Center(child: Text('Gagal memuat data')),
+        data: (allResults) {
+          return SingleChildScrollView(
+              child: StaticGrid(
+                  padding: EdgeInsets.all(20.w),
+                  gap: 35,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const HistoryPage(category: 'fish'))
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(20.r))
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Image.asset('images/fish3.png', scale: 2.3),
+                            const SizedBox(height: 10,),
+                            Text('Hematologi',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 18.sp,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w600
+                                )),
+                            SizedBox(height: 10.h),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const HistoryPage(category: 'molluscs')));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(20.r))
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
 
-                    children: [
-                      Image.asset('images/shell.png', scale: 2.3),
-                      const SizedBox(height: 10),
-                      Text('Hemosit',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                )
-              ),
-              GestureDetector(
-                onTap: () {
-                  List<Map<String, dynamic>> waterCalculationResult = calculationResults.where((species) => species['type'] == 'water quality').toList();
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => WQGalleryPage(calculationResult: waterCalculationResult))
-                  );
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Image.asset('images/testing_wq2.png', scale: 1.7),
-                      const SizedBox(height: 10),
-                      Text('Kualitas air',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600
-                          )),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                )
+                            children: [
+                              Image.asset('images/shell.png', scale: 2.3),
+                              SizedBox(height: 10.h),
+                              Text('Hemosit',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 18.sp,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.w600
+                                  )),
+                              SizedBox(height: 10.h),
+                            ],
+                          ),
+                        )
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const HistoryPage(category: 'water quality'))
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(20.r))
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            children: [
+                              Image.asset('images/testing_wq2.png', scale: 1.7),
+                              SizedBox(height: 10.h),
+                              Text('Kualitas air',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 18.sp,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.w600
+                                  )),
+                              SizedBox(height: 10.h),
+                            ],
+                          ),
+                        )
+                    )
+                  ]
               )
-            ]
-        )
-      ),
+          );
+        }
+      )
     );
   }
 

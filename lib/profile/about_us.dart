@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/components/reusable_about_us.dart';
+import 'package:hematologi/components/reusable_back_button.dart';
 import 'package:hematologi/hemaqua_team.dart';
 
 class AboutUs extends StatelessWidget {
@@ -18,63 +20,12 @@ class AboutUs extends StatelessWidget {
                 color: Colors.blue,
                 fontWeight: FontWeight.w600
             )),
+        leading: const ReusableBackButton(),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  color: Colors.blue
-              ),
-              child: Column(
-                children: [
-                  FittedBox(
-                    child: Text('Tentang aplikasi kami',
-                        style: GoogleFonts.poppins(
-                            fontSize: 23,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600
-                        )),
-                  ),
-                  const SizedBox(height: 10),
-                  Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
-                      ' sed do eiusmod tempor incididunt ut labore et dolore magna'
-                      ' aliqua. Id venenatis a condimentum vitae sapien pellentesque '
-                      'habitant morbi.',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white
-                      )),
-                  const SizedBox(height: 35),
-                  FittedBox(
-                    child: Text('Mengapa aplikasi kami?',
-                        style: GoogleFonts.poppins(
-                            fontSize: 23,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600
-                        )),
-                  ),
-                  const SizedBox(height: 10),
-                  Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
-                      ' sed do eiusmod tempor incididunt ut labore et dolore magna'
-                      ' aliqua. Id venenatis a condimentum vitae sapien pellentesque '
-                      'habitant morbi.',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white
-                      )),
-                ],
-              ),
-            ),
+            reusableAboutUs(),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 15),
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
@@ -91,10 +42,10 @@ class AboutUs extends StatelessWidget {
                           fontWeight: FontWeight.w600
                       )),
                   const SizedBox(height: 10),
-                  Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
-                      ' sed do eiusmod tempor incididunt ut labore et dolore magna'
-                      ' aliqua. Id venenatis a condimentum vitae sapien pellentesque '
-                      'habitant morbi.',
+                  Text("Menjadi aplikasi terdepan dalam pemantauan kualitas "
+                      "air berbasis analisis biologis yang mendukung kelestarian "
+                      "ekosistem perairan global, memastikan kualitas air yang lebih baik "
+                      "dan berkelanjutan untuk generasi mendatang.",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                           fontSize: 15,
@@ -108,10 +59,10 @@ class AboutUs extends StatelessWidget {
                           fontWeight: FontWeight.w600
                       )),
                   const SizedBox(height: 10),
-                  Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
-                      ' sed do eiusmod tempor incididunt ut labore et dolore magna'
-                      ' aliqua. Id venenatis a condimentum vitae sapien pellentesque '
-                      'habitant morbi.',
+                  Text("1.	Mengembangkan teknologi canggih untuk analisis hematologi ikan dan hemosit moluska yang dapat memberikan gambaran yang lebih jelas tentang kondisi kualitas air."
+                      "2.	Menyediakan alat yang efisien bagi peneliti dan pengelola sumber daya alam untuk mendeteksi ancaman terhadap ekosistem perairan dengan lebih cepat dan akurat."
+                      "3.	Meningkatkan pemahaman masyarakat dan pihak berwenang mengenai pentingnya kualitas air dalam menjaga keseimbangan ekosistem dan kesehatan lingkungan."
+                      "4.	Mendukung pengelolaan sumber daya perairan yang berkelanjutan melalui data yang dapat diakses dan dianalisis untuk pengambilan keputusan yang lebih baik.",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 15,

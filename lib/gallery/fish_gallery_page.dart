@@ -16,13 +16,6 @@ class FishGalleryPage extends StatefulWidget {
 class _FishGalleryPageState extends State<FishGalleryPage>  {
   DatabaseService service = DatabaseService();
   FirebaseAuth auth = FirebaseAuth.instance;
-  late Future<List<Species>> futureFishList;
-
-  @override
-  void initState() {
-    super.initState();
-    futureFishList = service.retrieveFishes();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +52,8 @@ class _FishGalleryPageState extends State<FishGalleryPage>  {
                   fontWeight: FontWeight.w600
               )),
         ),
-      body: FutureBuilder(
-          future: futureFishList,
+      body: StreamBuilder<List<Species>>(
+          stream: service.retrieveFishes(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
@@ -74,7 +67,7 @@ class _FishGalleryPageState extends State<FishGalleryPage>  {
                     gap: 20,
                     children: [
                       for(var fish in fishList)
-                        speciesCard(context, fish),
+                        speciesCard(context, fish, false),
                     ]
                 )
             );

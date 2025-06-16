@@ -16,7 +16,7 @@ Widget emptyFishCard() {
             borderRadius: BorderRadius.all(Radius.circular(15)),
             color: Color(0xFFD8E6FD),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 20),
           child: Image.asset('images/empty_img.png', scale: 2.5),
         ),
         const SizedBox(height: 20),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/gallery/blood_gallery_page.dart';
 import 'package:hematologi/gallery/fish_gallery_page.dart';
 import 'package:hematologi/gallery/mollusk_gallery_page.dart';
-import 'package:hematologi/history/history_page.dart';
-import 'package:hematologi/history/wq_gallery_page.dart';
 import 'package:hematologi/static_grid.dart';
 
 class GalleryCategory extends StatelessWidget {
@@ -69,7 +68,7 @@ class GalleryCategory extends StatelessWidget {
                         const SizedBox(height: 10,),
                         Text('Hematologi',
                             style: GoogleFonts.poppins(
-                                fontSize: 18,
+                                fontSize: 16.sp,
                                 color: Colors.blue,
                                 fontWeight: FontWeight.w600
                             )),
@@ -97,7 +96,7 @@ class GalleryCategory extends StatelessWidget {
                           const SizedBox(height: 10),
                           Text('Hemosit',
                               style: GoogleFonts.poppins(
-                                  fontSize: 18,
+                                  fontSize: 16.sp,
                                   color: Colors.blue,
                                   fontWeight: FontWeight.w600
                               )),
@@ -120,11 +119,11 @@ class GalleryCategory extends StatelessWidget {
                       padding: const EdgeInsets.all(10),
                       child: Column(
                         children: [
-                          Image.asset('images/water.png', scale: 1.7),
+                          Image.asset('images/image_32.png', scale: 1.5),
                           const SizedBox(height: 10),
                           Text('Darah',
                               style: GoogleFonts.poppins(
-                                  fontSize: 18,
+                                  fontSize: 16.sp,
                                   color: Colors.blue,
                                   fontWeight: FontWeight.w600
                               )),

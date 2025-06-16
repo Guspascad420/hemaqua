@@ -3,14 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/models/species.dart';
 import 'package:hematologi/species/species_details.dart';
 
-Widget speciesCard2(BuildContext context, Species species, int station, bool isFavoriteFish,
-    void Function(Species) addSpeciesToCart) {
+Widget speciesCard2(BuildContext context, Species species, int station, bool isFavoriteFish) {
   return GestureDetector(
     onTap: () {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => SpeciesDetails(species: species,
             station: station, isFavoriteSpecies: isFavoriteFish,
-            showBottomNav: true, addSpeciesToCart: addSpeciesToCart))
+            showBottomNav: true))
       );
     },
     child: Container(

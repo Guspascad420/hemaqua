@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/forgot_password.dart';
 import 'package:hematologi/home/home_page.dart';
 import 'package:hematologi/signup_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'create_profile_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,14 +27,12 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    // Add listeners to text controllers
     _emailTextController.addListener(_updateButtonState);
     _passwordTextController.addListener(_updateButtonState);
   }
 
   @override
   void dispose() {
-    // Dispose controllers to prevent memory leaks
     _emailTextController.dispose();
     _passwordTextController.dispose();
     super.dispose();
@@ -56,6 +57,44 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  Future<User?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        return null;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential = await auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+      final bool isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+
+      if (user != null) {
+        if (isNewUser) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => CreateProfilePage(user: user))
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomePage())
+          );
+        }
+      }
+
+      return user;
+    } catch (e) {
+      print("Error saat sign in dengan Google: $e");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   width: double.infinity,
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 90),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 90),
                   decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       color: Colors.white),
@@ -97,35 +136,38 @@ class _LoginPageState extends State<LoginPage> {
                                   )),
                             ],
                       )),
-                      Container(
-                          margin: const EdgeInsets.all(20),
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFEFF0F6)),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'images/google.png',
-                                scale: 2,
-                              ),
-                              const SizedBox(width: 10),
-                              Text('Login dengan Google',
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.grey[600],
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600)),
-                            ],
-                          )),
+                      InkWell(
+                        onTap: signInWithGoogle,
+                        child: Container(
+                            margin: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: const Color(0xFFEFF0F6)),
+                              borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'images/google.png',
+                                  scale: 2,
+                                ),
+                                const SizedBox(width: 10),
+                                Text('Login dengan Google',
+                                    style: GoogleFonts.poppins(
+                                        color: Colors.grey[600],
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600)),
+                              ],
+                            )),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                              margin: const EdgeInsets.only(right: 20),
-                              width: 130,
+                              margin: const EdgeInsets.only(left: 20),
+                              width: MediaQuery.of(context).size.width * 0.3,
                               child: const Divider(color: Color(0xFFEDF1F3))),
                           const SizedBox(
                             width: 15,
@@ -140,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Container(
                               margin: const EdgeInsets.only(right: 20),
-                              width: 130,
+                              width: MediaQuery.of(context).size.width * 0.3,
                               child: const Divider(color: Color(0xFFEDF1F3))),
                         ],
                       ),
