@@ -86,6 +86,7 @@ class MyApp extends StatelessWidget {
             title: 'Flutter Demo',
             theme: ThemeData(
               scaffoldBackgroundColor: Colors.white,
+              canvasColor: Colors.white,
               useMaterial3: true,
             ),
             home: child

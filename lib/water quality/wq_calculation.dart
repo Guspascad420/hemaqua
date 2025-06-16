@@ -1,4 +1,3 @@
-
 class WaterPollutionIndex {
   static double calculateWQI(Map<String, double> testValues, {double? naturalTemp}) {
     if (testValues.length < 6) {
