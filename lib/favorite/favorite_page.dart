@@ -52,13 +52,13 @@ class FavoritePage extends ConsumerWidget {
                   ],
                 )
                     : StaticGrid(
-                    gap: 20,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    children: [
-                      for (var species in favoriteSpecies)
-                        speciesCard(context, species, true),
-                    ]
-                )
+                        gap: 20,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        children: [
+                          for (var species in favoriteSpecies)
+                            speciesCard(context, species, true),
+                        ]
+                    )
             )
         );
       }

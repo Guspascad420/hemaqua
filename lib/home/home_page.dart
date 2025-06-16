@@ -6,7 +6,7 @@ import 'package:hematologi/add_data.dart';
 import 'package:hematologi/bottom_nav_bar.dart';
 import 'package:hematologi/cards/empty_fish_card.dart';
 import 'package:hematologi/favorite/favorite_page.dart';
-import 'package:hematologi/history/history_category.dart';
+import 'package:hematologi/history/history_page.dart';
 
 import '../cards/species_card.dart';
 import '../provider/providers.dart';
@@ -232,7 +232,7 @@ class HomePage extends ConsumerWidget {
                           TextButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const HistoryCategory())
+                                    builder: (context) => const HistoryPage())
                                 );
                               },
                               child: Text('Lihat semua',
