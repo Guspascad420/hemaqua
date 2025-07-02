@@ -41,7 +41,7 @@ class HistoryCategory extends ConsumerWidget {
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const HistoryPage(category: 'fish'))
+                            builder: (context) => const HistoryPage())
                         );
                       },
                       child: Container(
@@ -68,7 +68,7 @@ class HistoryCategory extends ConsumerWidget {
                     GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const HistoryPage(category: 'molluscs')));
+                              builder: (context) => const HistoryPage()));
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -95,7 +95,7 @@ class HistoryCategory extends ConsumerWidget {
                     GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const HistoryPage(category: 'water quality'))
+                              builder: (context) => const HistoryPage())
                           );
                         },
                         child: Container(

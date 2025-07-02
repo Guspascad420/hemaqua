@@ -73,25 +73,25 @@ class HistoryPage extends ConsumerWidget {
                 data: (filteredResults) {
                   return filteredResults.isEmpty
                       ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset('images/dead_fish.png', scale: 2.3),
-                        const SizedBox(height: 10),
-                        Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.symmetric(horizontal: 50),
-                            child: Text('Tidak ada riwayat yang tersedia',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.bold
-                                ))
-                        ),
-                        const SizedBox(height: 50),
-                      ],
-                    ),
-                  )
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('images/dead_fish.png', scale: 2.3),
+                              const SizedBox(height: 10),
+                              Container(
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.symmetric(horizontal: 50),
+                                  child: Text('Tidak ada riwayat yang tersedia',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 21,
+                                          fontWeight: FontWeight.bold
+                                      ))
+                              ),
+                              const SizedBox(height: 50),
+                            ],
+                          ),
+                        )
                       : ListView.builder(
                           itemCount: filteredResults.length,
                           itemBuilder: (context, index) {
