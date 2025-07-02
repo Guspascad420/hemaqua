@@ -11,7 +11,7 @@ Widget speciesCard3(BuildContext context, WidgetRef ref, Species species,
     child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         child: Dismissible(
-            key: Key(species.image_url),
+            key: Key(species.image_url!),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
               removeSpeciesFromCart(context, species, ref);
@@ -35,7 +35,7 @@ Widget speciesCard3(BuildContext context, WidgetRef ref, Species species,
                         borderRadius: BorderRadius.all(Radius.circular(20))
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-                    child: Image.network(species.image_url, width: imageWidth,),
+                    child: Image.network(species.image_url!, width: imageWidth,),
                   ),
                   const SizedBox(width: 15),
                   Expanded(

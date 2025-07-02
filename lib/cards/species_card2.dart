@@ -22,7 +22,7 @@ Widget speciesCard2(BuildContext context, Species species, int station, bool isF
         children: [
           const SizedBox(height: 10),
           Center(
-            child: Image.network(species.image_url, scale: 1.8),
+            child: Image.network(species.image_url!, scale: 1.8),
           ),
           Container(
             margin: const EdgeInsets.only(top: 15, left: 15, bottom: 15),

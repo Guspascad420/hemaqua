@@ -24,7 +24,7 @@ Widget speciesCard(BuildContext context, Species species, bool isFavoriteSpecies
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(species.image_url, scale: 1.8),
+          Image.network(species.image_url!, scale: 1.8),
           const SizedBox(height: 10),
           Text(species.name,
               style: GoogleFonts.poppins(
