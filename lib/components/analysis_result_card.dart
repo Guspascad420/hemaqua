@@ -228,7 +228,6 @@ class _SpeciesResultView extends StatelessWidget {
       ],
     );
   }
-
 }
 
 class _WaterQualityView extends StatelessWidget {
@@ -243,8 +242,8 @@ class _WaterQualityView extends StatelessWidget {
 
     if (result['pollution_index'] < 26) {
       statusText = 'Excellent';
-      backgroundColor = Colors.blue.shade100; // Warna "tua"
-      textColor = Colors.blue.shade800;       // Warna "muda"
+      backgroundColor = Colors.blue.shade100;
+      textColor = Colors.blue.shade800;     
     } else if (result['pollution_index'] < 51) {
       statusText = 'Bagus';
       backgroundColor = Colors.green.shade100;
