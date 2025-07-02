@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,6 +50,18 @@ void main() async {
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform
   );
+  if (kDebugMode) {
+    try {
+      const String ipLaptop = "192.168.18.42";
+      debugPrint("Menyambungkan ke Firebase Emulators...");
+      await FirebaseAuth.instance.useAuthEmulator(ipLaptop, 9099);
+      FirebaseFirestore.instance.useFirestoreEmulator(ipLaptop, 8080);
+      await FirebaseStorage.instance.useStorageEmulator(ipLaptop, 9199);
+      debugPrint("Berhasil tersambung ke Emulators.");
+    } catch (e) {
+      debugPrint("Gagal menyambung ke Emulators: $e");
+    }
+  }
   final (AuthStatus status, User? user) authResult  = await _checkAuthStatus();
   runApp(ProviderScope(child: MyApp(initialStatus: authResult.$1, user: authResult.$2)));
 }
