@@ -31,7 +31,10 @@ class DatabaseService {
 
           return species.copyWith(imageUrl: downloadUrl);
         } catch (e) {
-          return species.copyWith(imageUrl: 'URL_GAMBAR_DEFAULT_JIKA_ERROR');
+          final defaultUrl = await FirebaseStorage.instance
+              .ref('fishes/default/food.png')
+              .getDownloadURL();
+          return species.copyWith(imageUrl: defaultUrl);
         }
       }).toList();
       return Future.wait(speciesFutures).asStream();
@@ -63,14 +66,81 @@ class DatabaseService {
         .snapshots();
   }
 
+  Future<void> seedFishesData() async {
+    final collectionRef = _db.collection('specieses');
+
+    // List dummy data dari atas
+    final List<Map<String, dynamic>> dummyFishes = [
+      {
+        'name': 'Ikan Nila',
+        'latin_name': 'Oreochromis niloticus',
+        'description': 'Spesies ikan yang sangat adaptif dan toleran terhadap berbagai kondisi lingkungan, '
+            'sering digunakan sebagai bio-indikator kualitas air.',
+        'type': 'fish',
+      },
+      {
+        'name': 'Ikan Mas',
+        'latin_name': 'Cyprinus carpio',
+        'description': 'Salah satu ikan budidaya paling populer di Indonesia. '
+            'Sensitif terhadap perubahan mendadak pada suhu dan kadar oksigen terlarut (DO).',
+        'type': 'fish',
+      },
+      {
+        'name': 'Ikan Gurame',
+        'latin_name': 'Osphronemus goramy',
+        'description': 'Dikenal dengan kemampuannya mengambil oksigen langsung dari '
+            'udara. Kondisi hematologinya sering dipelajari untuk melihat efek pakan buatan.',
+        'type': 'fish',
+      },
+      {
+        'name': 'Ikan Lele',
+        'latin_name': 'Clarias batrachus',
+        'description': 'Sangat tangguh dan dapat bertahan hidup di perairan dengan kualitas air '
+            'yang buruk dan kadar oksigen rendah, namun tetap rentan terhadap infeksi bakteri.',
+        'type': 'fish',
+      },
+      {
+        'name': 'Ikan Tawes',
+        'latin_name': 'Puntius javanicus',
+        'description': 'Ikan air tawar asli Indonesia yang sering ditemukan di sungai dan rawa. '
+            'Digunakan dalam studi dampak polusi logam berat.',
+        'type': 'fish',
+      },
+      {
+        'name': 'Ikan Patin',
+        'latin_name': 'Pangasius sp.',
+        'description': 'Ikan komersial penting yang pertumbuhannya sangat dipengaruhi '
+            'oleh kualitas pakan dan parameter air seperti amonia.',
+        'type': 'fish',
+      },
+      {
+        'name': 'Ikan Gabus',
+        'latin_name': 'Channa striata',
+        'description': 'Ikan predator air tawar yang memiliki nilai ekonomis tinggi '
+            'karena kandungan albuminnya. Sangat tahan banting di berbagai lingkungan.',
+        'type': 'fish',
+      },
+    ];
+
+    print('Memulai proses seeding data ikan...');
+
+    for (final fishData in dummyFishes) {
+      await collectionRef.add(fishData);
+      print('Berhasil menambahkan: ${fishData['name']}');
+    }
+
+    print('Proses seeding selesai!');
+  }
+
   Future<void> updateUserProfile(String uid, Map<String, dynamic> dataToUpdate) async {
     await _db.collection('users').doc(uid).update(dataToUpdate);
   }
 
-  void addCalculationResult(Map<String, dynamic> result, String uid) async {
-    await _db.collection('users').doc(uid).update({
-      'calculation_results' : FieldValue.arrayUnion([result])
-    });
+  void addCalculationResult(Map<String, dynamic> result) async {
+    // await _db.collection('users').doc(uid).update({
+    //   'calculation_results' : FieldValue.arrayUnion([result])
+    // });
+    await _db.collection('calculation_results').add(result);
   }
 
   void removeCalculationResult(Map<String, dynamic> result, String uid) async {
