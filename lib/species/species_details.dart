@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/hemosit/hemosit_parameters.dart';
 import 'package:hematologi/models/species.dart';
 
+import '../hematologi/hematologi_parameters.dart';
 import '../provider/providers.dart';
 
 class SpeciesDetails extends ConsumerStatefulWidget {
@@ -89,22 +91,13 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
       ),
       bottomNavigationBar: !widget.showBottomNav ? null : GestureDetector(
           onTap: () {
-            final uid = ref.read(authStateProvider).asData?.value?.uid;
-            bool itemAdded = false; // Flag untuk nandain kalo ada item yg ditambah
-
-            if (widget.species.type == "fish" && hematologiCartList.isEmpty) {
-              ref.read(databaseServiceProvider).addSpeciesToHematologiCart(widget.species, uid!);
-              itemAdded = true;
-            } else if (widget.species.type == "molluscs" && hemositCartList.isEmpty) {
-              ref.read(databaseServiceProvider).addSpeciesToHemositCart(widget.species, uid!);
-              itemAdded = true;
-            }
-
-            if (itemAdded) {
-              _showSnackBar(context, 'Spesies berhasil ditambahkan', Colors.green);
-            } else {
-              _showSnackBar(context, 'Keranjang sudah terisi, tidak bisa menambah lagi.', Colors.orange);
-            }
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => widget.species.type == 'fish'
+                    ? HematologiParameters(
+                        species: widget.species, station: widget.station
+                      )
+                    : HemositParameters(species: widget.species, station: widget.station))
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 22),
@@ -112,12 +105,9 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Add to cart',
+                Text('Mulai Analisis',
                     style: GoogleFonts.poppins(
                         fontSize: 20, color: Colors.white)),
-                const SizedBox(width: 10),
-                const Icon(Icons.shopping_cart_outlined,
-                    color: Colors.white, size: 30)
               ],
             ),
           )
@@ -132,7 +122,7 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                     children: [
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 30),
-                        child: Image.network(widget.species.image_url),
+                        child: Image.network(widget.species.image_url!),
                       ),
                       Expanded(
                         child: Container(
