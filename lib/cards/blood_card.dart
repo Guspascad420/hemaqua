@@ -20,7 +20,7 @@ Widget bloodCard(BuildContext context, Species species) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Image.asset(species.image_url, scale: 2.3),
+              child: Image.asset(species.image_url!, scale: 2.3),
             ),
             Container(
               margin: const EdgeInsets.only(top: 15, left: 15, bottom: 15),
