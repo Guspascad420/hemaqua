@@ -18,6 +18,7 @@ class HematologiSpeciesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<Species> favoriteSpeciesList = ref.watch(favoriteSpeciesListProvider);
+    final asyncFishes = ref.watch(fishesStreamProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4FBFF),
@@ -92,29 +93,28 @@ class HematologiSpeciesList extends ConsumerWidget {
                       fontSize: 20, color: Colors.white)),
             )
         ),
-      body: StreamBuilder<List<Species>>(
-        stream: ref.read(databaseServiceProvider).retrieveFishes(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Text('Mohon cek koneksi internet kamu');
-          }
-          var fishList = snapshot.data!;
-          fishList = fishList.where((fish) => fish.stations!.contains(station))
-              .toList();
+      body: asyncFishes.when(
+        data: (fishes) {
           return SingleChildScrollView(
-            child: StaticGrid(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                gap: 20,
-                children: [
-                  for(var fish in fishList)
-                    speciesCard2(context, fish, station,
-                        favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false),
-                ]
-            )
+              child: StaticGrid(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  gap: 20,
+                  children: [
+                    for(var fish in fishes)
+                      speciesCard2(context, fish, station,
+                          favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false),
+                  ]
+              )
           );
-        }
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (error, stackTrace) {
+          return Center(
+            child: Text('Error: $error'),
+          );
+        },
       )
     );
   }

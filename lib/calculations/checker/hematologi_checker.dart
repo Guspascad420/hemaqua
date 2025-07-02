@@ -25,6 +25,7 @@ class HematologiChecker {
       'Eritrosit': [50000, 90000],
       'Hematokrit': [0.22, 0.6],
       'Hemoglobin': [6, 8],
+      'Mikronuklei': [8, 23],
       'Limfosit': [0.7, 0.8],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
@@ -44,6 +45,7 @@ class HematologiChecker {
       'Eritrosit': [61200, 74000],
       'Hematokrit': [0.1749, 0.2194],
       'Hemoglobin': [5.94, 6.60],
+      'Mikronuklei': [8, 23],
       'Limfosit': [0.7, 0.8],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
@@ -53,6 +55,7 @@ class HematologiChecker {
       'Eritrosit': [303300, 303300],
       'Hematokrit': [0.2933, 0.2933],
       'Hemoglobin': [11.13, 11.13],
+      'Mikronuklei': [8, 23],
       'Limfosit': [0.75, 0.82],
       'Monosit': [0.11, 0.15],
       'Neutrofil': [0.0767, 0.13]
@@ -62,6 +65,7 @@ class HematologiChecker {
       'Eritrosit': [86600, 86600],
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5.36, 5.48],
+      'Mikronuklei': [8, 23],
       'Limfosit': [0.7, 0.8],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
@@ -71,6 +75,7 @@ class HematologiChecker {
       'Eritrosit': [86600, 86600],
       'Hematokrit': [0.2325, 0.2483],
       'Hemoglobin': [5, 7],
+      'Mikronuklei': [8, 23],
       'Limfosit': [0.7613, 0.7820],
       'Monosit': [0.0573, 0.0653],
       'Neutrofil': [0.1607, 0.1740]
@@ -81,6 +86,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -90,6 +96,7 @@ class HematologiChecker {
       'Hematokrit': [0.17, 0.3333],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -99,6 +106,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -108,6 +116,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -117,6 +126,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -126,6 +136,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -135,6 +146,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -144,6 +156,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -153,6 +166,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
@@ -162,6 +176,7 @@ class HematologiChecker {
       'Hematokrit': [0.2, 0.3],
       'Hemoglobin': [5, 7],
       'Limfosit': [0.7, 0.8],
+      'Mikronuklei': [8, 23],
       'Monosit': [0.10, 0.15],
       'Neutrofil': [0.5, 0.10]
     },
