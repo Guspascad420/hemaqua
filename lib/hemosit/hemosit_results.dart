@@ -14,10 +14,10 @@ class HemositResults extends ConsumerWidget {
   final Map<String, dynamic> calculationResults;
   final Species species;
   final bool showBottomNav;
-  final int station;
+  final int? station;
 
   const HemositResults({super.key, required this.calculationResults,
-        required this.species, required this.station, required this.showBottomNav});
+        required this.species, this.station, required this.showBottomNav});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,25 +43,25 @@ class HemositResults extends ConsumerWidget {
         standardQuality = '$standardQuality ${formatNumber(lowerRange)}-${formatNumber(upperRange)}';
 
       } else {
-        if (param == 'Hyalin') {
-          maxHyalunosit = HemositChecker.normalGastropodaRanges[genus]!['Hyalin']!;
+        if (param == 'hyalin') {
+          maxHyalunosit = HemositChecker.normalGastropodaRanges[genus]!['hyalin']!;
           status = HemositChecker.checkHyalunositCalculation(genus, calculationResults[param]!);
           standardQuality = '$standardQuality <${formatNumber(maxHyalunosit)}';
 
-        } else if (param == 'Granular') {
-          minGranulosit = HemositChecker.normalGastropodaRanges[genus]!['Granular']!;
+        } else if (param == 'granular') {
+          minGranulosit = HemositChecker.normalGastropodaRanges[genus]!['granular']!;
           status = HemositChecker.checkGranularCalculation(genus,
               calculationResults[param]!);
           standardQuality = '$standardQuality >${formatNumber(minGranulosit)}';
 
-        } else if (param == 'Semi Granular') {
-          normalSemiGranulosit = HemositChecker.normalGastropodaRanges[genus]!['Semi Granular']!;
+        } else if (param == 'semi_granular') {
+          normalSemiGranulosit = HemositChecker.normalGastropodaRanges[genus]!['semi_granular']!;
           status = HemositChecker.checkSemiGranularCalculation(genus,
               calculationResults[param]!);
           standardQuality = '$standardQuality ${formatNumber(normalSemiGranulosit)}';
 
-        } else if (param == 'THC') {
-          normalThc = HemositChecker.normalGastropodaRanges[genus]!['THC']!;
+        } else if (param == 'thc') {
+          normalThc = HemositChecker.normalGastropodaRanges[genus]!['thc']!;
           status = HemositChecker.checkTHCCalculation(genus,
               calculationResults[param]!);
           standardQuality = '$standardQuality ${formatNumber(normalThc)}';

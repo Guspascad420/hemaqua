@@ -86,14 +86,14 @@ class _HematologiParametersState extends State<HematologiParameters> with Single
         bottomNavigationBar: GestureDetector(
             onTap: () {
               Map<String, double> calculationResults = {
-                'Leukosit': leukosit,
-                'Eritrosit': eritrosit,
-                'Hematokrit': hematokrit,
-                'Limfosit': limfosit,
-                'Monosit': monosit,
-                'Neutrofil': neutrofil,
-                'Mikronuklei': mikronuklei,
-                'Hemoglobin': hemoglobin,
+                'leukosit': leukosit,
+                'eritrosit': eritrosit,
+                'hematokrit': hematokrit,
+                'limfosit': limfosit,
+                'monosit': monosit,
+                'neutrofil': neutrofil,
+                'mikronuklei': mikronuklei,
+                'hemoglobin': hemoglobin,
               };
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => HematologiResults(species: widget.species,

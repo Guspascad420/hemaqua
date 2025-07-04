@@ -15,13 +15,31 @@ import '../components/analysis/species_analysis_result_page.dart';
 import '../models/species.dart';
 
 class HematologiResults extends ConsumerWidget {
-  final int station;
+  final int? station;
   final Species species;
   final bool showBottomNav;
   final Map<String, dynamic> calculationResults;
 
   const HematologiResults({super.key, required this.calculationResults,
-    required this.species, required this.station, required this.showBottomNav});
+    required this.species, this.station, required this.showBottomNav});
+
+  String formatToTitleCase(String text) {
+    if (text.isEmpty) {
+      return text; // Kalo string kosong, balikin aja
+    }
+
+    final String textWithSpaces = text.replaceAll('_', ' ');
+    final List<String> words = textWithSpaces.split(' ');
+
+    final List<String> capitalizedWords = words.map((word) {
+      if (word.isEmpty) {
+        return '';
+      }
+      return '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}';
+    }).toList();
+
+    return capitalizedWords.join(' ');
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +57,7 @@ class HematologiResults extends ConsumerWidget {
       final standardQuality = 'Standar baku mutu: ${formatNumber(lowerRange)}-${formatNumber(upperRange)}';
 
       return ResultParameterCard(
-        parameterName: param,
+        parameterName: formatToTitleCase(param),
         resultValue: resultValue,
         status: status,
         standardQuality: standardQuality,
@@ -47,13 +65,14 @@ class HematologiResults extends ConsumerWidget {
     }).toList();
 
     void handleSave() {
+      debugPrint(species.toMap().toString());
       final auth = FirebaseAuth.instance; // Contoh ambil auth dari provider
       final calculationResult = {
         'species_id': species.id!,
-        'station': station,
+        'station_id': "Stasiun $station",
         'created_at': Timestamp.now(),
         'type': 'fish_hematology',
-        ...calculationResults, // Spread operator untuk semua parameter
+        ...calculationResults,
         'user_id': auth.currentUser!.uid,
       };
       ref.read(databaseServiceProvider).addCalculationResult(calculationResult);
