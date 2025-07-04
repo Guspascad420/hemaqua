@@ -18,7 +18,7 @@ class HematologiSpeciesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<Species> favoriteSpeciesList = ref.watch(favoriteSpeciesListProvider);
-    final asyncFishes = ref.watch(fishesStreamProvider);
+    final asyncFishes = ref.watch(speciesesStreamProvider('fish'));
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4FBFF),

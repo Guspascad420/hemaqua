@@ -88,6 +88,10 @@ final favoriteSpeciesStreamProvider = StreamProvider.autoDispose<List<Species>>(
   );
 });
 
+final speciesesStreamProvider = StreamProvider.autoDispose.family<List<Species>, String>((ref, type) {
+  return ref.read(databaseServiceProvider).retrieveSpecieses(type);
+});
+
 final favoriteSpeciesListProvider = Provider.autoDispose<List<Species>>((ref) {
   final asyncValue = ref.watch(favoriteSpeciesStreamProvider);
   return asyncValue.asData?.value ?? [];

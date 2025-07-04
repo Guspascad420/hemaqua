@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,7 @@ class HemositSpeciesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<Species> favoriteSpeciesList = ref.watch(favoriteSpeciesListProvider);
+    final asyncMolluscs = ref.watch(speciesesStreamProvider('mollusc'));
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4FBFF),
@@ -91,29 +93,29 @@ class HemositSpeciesList extends ConsumerWidget {
                       fontSize: 20, color: Colors.white)),
             )
       ),
-      body: StreamBuilder<List<Species>>(
-          stream: ref.read(databaseServiceProvider).retrieveMolluscs(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return const Text('Mohon cek koneksi internet kamu');
-            }
-            List<Species> molluscList = snapshot.data!;
-            molluscList = molluscList.where((mollusk) =>
-                mollusk.stations!.contains(station)).toList();
-            return SingleChildScrollView(
-                child: StaticGrid(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    gap: 20,
-                    children: [
-                      for(var mollusk in molluscList)
-                        speciesCard2(context, mollusk, station,
-                            favoriteSpeciesList.contains(mollusk)),
-                    ]
-                )
-            );
-          }
+      body: asyncMolluscs.when(
+        data: (molluscs) {
+          return SingleChildScrollView(
+              child: StaticGrid(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  gap: 20,
+                  children: [
+                    for(var fish in molluscs)
+                      speciesCard2(context, fish, station,
+                          favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false),
+                  ]
+              )
+          );
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (error, stackTrace) {
+          debugPrint(stackTrace.toString());
+          return Center(
+            child: Text('Error: $error'),
+          );
+        },
       )
     );
   }
