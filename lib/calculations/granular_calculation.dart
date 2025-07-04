@@ -62,9 +62,9 @@ class _GranularCalculationState extends State<GranularCalculation> {
                     ),
                     child: Image.asset('images/granular_formula.png', scale: 2.5)
                 ),
-                reusableTextField('Jumlah sel granular', granularCells),
+                reusableTextField('Jumlah sel granular', granularCells, TextInputType.number),
                 const SizedBox(height: 10),
-                reusableTextField('Jumlah total hemosit', totalHemosit),
+                reusableTextField('Jumlah total hemosit', totalHemosit, TextInputType.number),
                 const SizedBox(height: 30),
                 ElevatedButton(
                     onPressed: () {
