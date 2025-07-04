@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/components/gauge/water_quality_gauge.dart';
 import 'package:hematologi/data_saved.dart';
 import 'package:hematologi/database/database_service.dart';
 
@@ -65,15 +67,16 @@ class _WaterQualityOutputsState extends State<WaterQualityOutputs> {
                 height: 60.h,
                 margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                 child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () {
                       DateTime now = DateTime.now();
                       String formattedDate =
                           '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
                       var calculationResult = {
                         "pollution_index": widget.wqi,
-                        "station": widget.station,
+                        "station_id": "Stasiun ${widget.station}",
                         "date": formattedDate,
-                        "type": "water quality",
+                        "type": "water_quality",
+                        'created_at': Timestamp.now(),
                         "user_id": auth.currentUser!.uid
                       };
                       service.addCalculationResult(calculationResult);
@@ -97,59 +100,56 @@ class _WaterQualityOutputsState extends State<WaterQualityOutputs> {
             ),
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(20.r)),
-                  color: Colors.white
-                ),
-                padding: EdgeInsets.symmetric(vertical: 60.h, horizontal: 15.w),
-                margin: EdgeInsets.only(top: 25.h, bottom: 30.h),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('POLLUTION INDEX (IP)',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                            fontSize: 16.sp,
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.w500
-                        )),
-                    FittedBox(
-                      child: Text(widget.wqi.toStringAsFixed(2),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20.r)),
+                      color: Colors.white
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 60.h, horizontal: 15.w),
+                  margin: EdgeInsets.only(top: 25.h, bottom: 30.h),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('POLLUTION INDEX (IP)',
+                          textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
-                              fontSize: 50.sp,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold
+                              fontSize: 16.sp,
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.w500
                           )),
-                    ),
-                    const SizedBox(height: 15),
-                    Text('Status hasil: ',
-                        style: GoogleFonts.poppins(
-                            fontSize: 18.sp,
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.w600
-                        )),
-                    Text(widget.resultStatus,
-                        style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w600
-                        )),
-                    SizedBox(height: 10.h),
-                    Text(widget.copywriteText,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                            fontSize: 14.sp,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500
-                        ))
-                  ],
+                      SizedBox(
+                          height: 220.h,
+                          child: WaterQualityGauge(value: widget.wqi)
+                      ),
+                      Text('Status result: ',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18.sp,
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.w600
+                          )),
+                      Text(widget.resultStatus,
+                          style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w600
+                          )),
+                      SizedBox(height: 10.h),
+                      Text(widget.copywriteText,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500
+                          ))
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 20.h)
-            ],
+                SizedBox(height: 20.h)
+              ],
+            )
           ),
         )
     );

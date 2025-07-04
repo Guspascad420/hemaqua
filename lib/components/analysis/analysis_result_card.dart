@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../hematologi/hematologi_results.dart';
-import '../hemosit/hemosit_results.dart';
-import '../models/species.dart';
-import '../provider/providers.dart';
-import '../water quality/wq_calculation.dart';
-import '../water quality/wq_outputs.dart';
+import '../../hematologi/hematologi_results.dart';
+import '../../hemosit/hemosit_results.dart';
+import '../../models/species.dart';
+import '../../provider/providers.dart';
+import '../../water quality/wq_calculation.dart';
+import '../../water quality/wq_outputs.dart';
 
 class AnalysisResultCard extends ConsumerWidget {
   final Map<String, dynamic> result;
@@ -336,7 +336,7 @@ class _WaterQualityView extends StatelessWidget {
               children: [
                 Icon(Icons.location_on, color: Colors.blue, size: 30.r),
                 const SizedBox(width: 4),
-                Text("Stasiun ${result['station']}",
+                Text(result['station_id'],
                     style: GoogleFonts.poppins(
                         color: Colors.grey,
                         fontSize: 14.sp,
