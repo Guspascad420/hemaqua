@@ -60,8 +60,7 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final hematologiCartList = ref.watch(hematologiCartListProvider);
-    final hemositCartList = ref.watch(hemositCartListProvider);
+    final imageUrlAsync = ref.watch(imageUrlProvider(widget.species.image_url ?? ''));
 
     return Scaffold(
       backgroundColor: Colors.blue,
@@ -120,9 +119,15 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 30),
-                        child: Image.network(widget.species.image_url!),
+                      imageUrlAsync.when(
+                          loading: () => const Center(child: CircularProgressIndicator()),
+                          error: (err, stack) => const Center(child: Icon(Icons.error)),
+                          data: (url) {
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 30),
+                              child: Image.network(url),
+                            );
+                          }
                       ),
                       Expanded(
                         child: Container(

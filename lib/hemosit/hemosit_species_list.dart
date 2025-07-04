@@ -46,32 +46,6 @@ class HemositSpeciesList extends ConsumerWidget {
               icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
             )
         ),
-        actions: [
-          Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF60A5FA).withOpacity(0.3),
-                    blurRadius: 3,
-                    offset: const Offset(0, 3), // Shadow position
-                  ),
-                ],
-              ),
-              margin: const EdgeInsets.only(right: 15),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HemositSpeciesCart(station: station))
-                  );
-                },
-                icon: const Icon(Icons.shopping_cart, color: Colors.blue),
-              )
-          ),
-        ],
         title: Text('Daftar Spesies',
             style: GoogleFonts.poppins(
                 fontSize: 21,
@@ -100,9 +74,9 @@ class HemositSpeciesList extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   gap: 20,
                   children: [
-                    for(var fish in molluscs)
-                      speciesCard2(context, fish, station,
-                          favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false),
+                    for(var mollusc in molluscs)
+                      speciesCard2(ref, context, mollusc, station,
+                          favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), mollusc.toMap())) ? true : false),
                   ]
               )
           );

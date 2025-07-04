@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/models/species.dart';
 import 'package:hematologi/species/species_details.dart';
 
-Widget speciesCard2(BuildContext context, Species species, int station, bool isFavoriteFish) {
+import '../provider/providers.dart';
+
+Widget speciesCard2(WidgetRef ref, BuildContext context, Species species, int station, bool isFavoriteFish) {
+  final imageUrlAsync = ref.watch(imageUrlProvider(species.image_url ?? ''));
+  // debugPrint(species.toMap().toString());
   return GestureDetector(
     onTap: () {
       Navigator.of(context).push(
@@ -21,8 +26,14 @@ Widget speciesCard2(BuildContext context, Species species, int station, bool isF
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 10),
-          Center(
-            child: Image.network(species.image_url!, scale: 1.8),
+          imageUrlAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (err, stack) => const Center(child: Icon(Icons.error)),
+            data: (url) {
+              return Center(
+                child: Image.network(url, scale: 1.8),
+              );
+            }
           ),
           Container(
             margin: const EdgeInsets.only(top: 15, left: 15, bottom: 15),

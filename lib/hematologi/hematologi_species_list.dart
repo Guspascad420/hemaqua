@@ -46,32 +46,6 @@ class HematologiSpeciesList extends ConsumerWidget {
               icon: const Icon(Icons.arrow_back_ios, color: Colors.blue),
             )
         ),
-        actions: [
-          Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF60A5FA).withOpacity(0.3),
-                    blurRadius: 3,
-                    offset: const Offset(0, 3), // Shadow position
-                  ),
-                ],
-              ),
-              margin: const EdgeInsets.only(right: 15),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HematologiSpeciesCart(station: station))
-                  );
-                },
-                icon: const Icon(Icons.shopping_cart, color: Colors.blue),
-              )
-          ),
-        ],
         title: Text('Daftar Spesies',
             style: GoogleFonts.poppins(
                 fontSize: 21,
@@ -101,7 +75,7 @@ class HematologiSpeciesList extends ConsumerWidget {
                   gap: 20,
                   children: [
                     for(var fish in fishes)
-                      speciesCard2(context, fish, station,
+                      speciesCard2(ref, context, fish, station,
                           favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false),
                   ]
               )
