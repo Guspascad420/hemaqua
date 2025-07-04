@@ -33,7 +33,6 @@ class ProfilePage extends ConsumerWidget {
                   fontWeight: FontWeight.w600
               )),
         ),
-        bottomNavigationBar: BottomNavBar(context: context, currentIndex: 2, user: const {},),
         body: SingleChildScrollView(
             child: Column(
               children: [

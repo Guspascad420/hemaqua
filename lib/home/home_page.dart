@@ -7,6 +7,7 @@ import 'package:hematologi/bottom_nav_bar.dart';
 import 'package:hematologi/cards/empty_fish_card.dart';
 import 'package:hematologi/favorite/favorite_page.dart';
 import 'package:hematologi/history/history_page.dart';
+import 'package:hematologi/profile/profile_page.dart';
 
 import '../cards/species_card.dart';
 import '../provider/providers.dart';
@@ -39,32 +40,49 @@ class HomePage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      asyncUserDoc.when(
-                        loading: () => Text('Halo, ...', // Tampilan saat loading
-                            style: GoogleFonts.poppins(
-                                fontSize: 21.sp,
-                                color: const Color(0xFF3B82F6),
-                                fontWeight: FontWeight.bold)),
-                        error: (err, stack) => Text('Gagal memuat!', // Tampilan saat error
-                            style: GoogleFonts.poppins(
-                                fontSize: 21.sp,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold)),
-                        data: (userDoc) {
-                          final data = userDoc.data() as Map<String, dynamic>?;
-                          final username = data?['username'] ?? '';
-                          return Text('Halo, $username!',
-                              style: GoogleFonts.poppins(
-                                  fontSize: 21.sp,
-                                  color: const Color(0xFF3B82F6),
-                                  fontWeight: FontWeight.bold));
-                        },
-                      ),
-                    ],
+                  asyncUserDoc.when(
+                    loading: () => Text('Halo, ...', // Tampilan saat loading
+                        style: GoogleFonts.poppins(
+                            fontSize: 21.sp,
+                            color: const Color(0xFF3B82F6),
+                            fontWeight: FontWeight.bold)),
+                    error: (err, stack) => Text('Gagal memuat!',
+                        style: GoogleFonts.poppins(
+                            fontSize: 21.sp,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold)),
+                    data: (userDoc) {
+                      final data = userDoc.data() as Map<String, dynamic>?;
+                      final username = data?['username'] ?? '';
+                      return Text('Halo, ${username.split(' ')[0]}!',
+                          style: GoogleFonts.poppins(
+                              fontSize: 21.sp,
+                              color: const Color(0xFF3B82F6),
+                              fontWeight: FontWeight.bold));
+                    },
                   ),
+                  Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF60A5FA).withOpacity(0.3),
+                            blurRadius: 3,
+                            offset: const Offset(0, 3), // Shadow position
+                          ),
+                        ],
+                      ),
+                      margin: const EdgeInsets.only(left: 20),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const ProfilePage())
+                          );
+                        },
+                        icon: const Icon(Icons.person_2_outlined, color: Colors.blue),
+                      )
+                  )
                 ],
               ),
               SizedBox(height: 20.h),

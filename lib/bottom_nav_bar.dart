@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/add_data.dart';
+import 'package:hematologi/library/library_page.dart';
 import 'package:hematologi/profile/profile_page.dart';
 
 import 'home/home_page.dart';
@@ -28,29 +29,10 @@ class BottomNavBar extends StatelessWidget {
     } else if (index == 2 && currentIndex != 2) {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-              builder: (context) => const ProfilePage()
+              builder: (context) => const LibraryPage()
           )
       );
     }
-    // } else if (index == 2) {
-    //   Navigator.of(context).pushReplacement(
-    //       MaterialPageRoute(
-    //           builder: (context) => const GiftsPage()
-    //       )
-    //   );
-    // } else if (index == 3) {
-    //   Navigator.of(context).pushReplacement(
-    //       MaterialPageRoute(
-    //           builder: (context) => const MissionPage()
-    //       )
-    //   );
-    // } else if (index == 4) {
-    //   Navigator.of(context).pushReplacement(
-    //       MaterialPageRoute(
-    //           builder: (context) => const ProfilePage()
-    //       )
-    //   );
-    // }
   }
 
   @override
@@ -80,8 +62,8 @@ class BottomNavBar extends StatelessWidget {
             label: 'Tambah'
         ),
         const BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_outlined),
-            label: 'Profil'
+            icon: Icon(Icons.book_outlined),
+            label: 'Pustaka'
         ),
       ],
       selectedItemColor: Colors.blue,
