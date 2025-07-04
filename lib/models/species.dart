@@ -1,21 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Species {
+  final String? id;
   final String name;
   final String latin_name;
   final String type;
   final String? klass;
-  final String image_url;
+  final String? image_url;
   final List<int>? stations;
   final String description;
 
-  Species({this.klass, required this.name, required this.latin_name,
+  Species({this.id, this.klass, required this.name, required this.latin_name,
     required this.type, this.stations, required this.image_url, required this.description});
 
   factory Species.fromSnapshot(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     return Species(
+        id: doc.id,
         klass: data['class'] ?? "unknown",
         stations: (data['stations'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
         name: data['name'],
@@ -28,6 +30,7 @@ class Species {
 
   factory Species.fromMap(Map<String, dynamic> data) {
     return Species(
+        id: data['id'],
         klass: data['class'] ?? "unknown",
         stations: (data['stations'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
         name: data['name'],
@@ -72,6 +75,7 @@ class Species {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'latin_name': latin_name,
       'image_url': image_url,
       'name': name,

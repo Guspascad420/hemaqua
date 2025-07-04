@@ -86,7 +86,6 @@ class HistoryFilterPanel extends ConsumerWidget {
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
-                      // Update state filter stasiun saat user memilih
                       ref.read(filterStationProvider.notifier).state = newValue!;
                     },
                   )

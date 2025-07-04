@@ -53,7 +53,7 @@ class _FishGalleryPageState extends State<FishGalleryPage>  {
               )),
         ),
       body: StreamBuilder<List<Species>>(
-          stream: service.retrieveFishes(),
+          stream: service.retrieveSpecieses('fish'),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());

@@ -53,7 +53,7 @@ class _MolluskGalleryPageState extends State<MolluskGalleryPage>  {
             )),
       ),
         body: StreamBuilder<List<Species>>(
-            stream: service.retrieveMolluscs(),
+            stream: service.retrieveSpecieses('mollusc'),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());

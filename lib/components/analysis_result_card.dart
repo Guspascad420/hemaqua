@@ -45,7 +45,7 @@ class AnalysisResultCard extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () {
-                ref.read(databaseServiceProvider).removeCalculationResult(speciesData, uid);
+                ref.read(databaseServiceProvider).removeCalculationResult(speciesData['id']);
                 Navigator.of(context).pop();
               },
               child: Text("Hapus", style: GoogleFonts.poppins(fontSize: 15,
@@ -56,55 +56,51 @@ class AnalysisResultCard extends ConsumerWidget {
       },
     );
   }
-  void _navigateToResultDetail(BuildContext context, Map<String, dynamic> result) {
-    Species? species;
+  void _navigateToResultDetail(WidgetRef ref, BuildContext context, Map<String, dynamic> result) {
     Map<String, dynamic> calculationParams = {};
 
     final String type = result['type'];
 
-    if (type == 'fish' || type == 'molluscs') {
-      species = Species.fromCalculationResultMap(result);
-
-      if (type == 'fish') {
+    if (type == 'fish_hematology' || type == 'mollusc_hemocyte') {
+      if (type == 'fish_hematology') {
         calculationParams = {
-          'Eritrosit': (result['eritrosit'] as num).toDouble(),
-          'Leukosit': (result['leukosit'] as num).toDouble(),
-          "Hematokrit": (result['hematokrit'] as num).toDouble(),
-          "Hemoglobin": (result['hemoglobin'] as num).toDouble(),
-          "Mikronuklei": (result['mikronuklei'] as num).toDouble(),
-          "Limfosit": (result['limfosit'] as num).toDouble(),
-          "Monosit": (result['monosit'] as num).toDouble(),
-          "Neutrofil": (result['neutrofil'] as num).toDouble()
+          'eritrosit': (result['eritrosit'] as num).toDouble(),
+          'leukosit': (result['leukosit'] as num).toDouble(),
+          "hematokrit": (result['hematokrit'] as num).toDouble(),
+          "hemoglobin": (result['hemoglobin'] as num).toDouble(),
+          "mikronuklei": (result['mikronuklei'] as num).toDouble(),
+          "limfosit": (result['limfosit'] as num).toDouble(),
+          "monosit": (result['monosit'] as num).toDouble(),
+          "neutrofil": (result['neutrofil'] as num).toDouble()
         };
       } else { // type == 'molluscs'
         calculationParams = {
-          'THC': (result['thc'] as num).toDouble(),
-          'Hyalin': (result['hyalin'] as num).toDouble(),
-          'Granular': (result['granular'] as num).toDouble(),
-          'Semi Granular': (result['semi_granular'] as num).toDouble(),
+          'thc': (result['thc'] as num).toDouble(),
+          'hyalin': (result['hyalin'] as num).toDouble(),
+          'granular': (result['granular'] as num).toDouble(),
+          'semi_granular': (result['semi_granular'] as num).toDouble(),
         };
       }
     } else {
       calculationParams = {
         'pollution_index': (result['pollution_index'] as num).toDouble(),
-        'station': (result['station'] as num).toInt(),
+        'station': result['station_id']
       };
     }
 
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
-        if (type == 'fish') {
+        final speciesAsync = ref.watch(speciesDetailsProvider(result['species_id']));
+        if (type == 'fish_hematology') {
           return HematologiResults(
             calculationResults: calculationParams,
-            species: species!, // Aman pakai ! karena sudah pasti diisi jika type 'fish'
-            station: result['station'],
+            species: speciesAsync.value!,
             showBottomNav: false,
           );
-        } else if (type == 'molluscs') {
+        } else if (type == 'mollusc_hemocyte') {
           return HemositResults(
             calculationResults: calculationParams,
-            species: species!, // Aman pakai ! karena sudah pasti diisi jika type 'molluscs'
-            station: result['station'],
+            species: speciesAsync.value!,
             showBottomNav: false,
           );
         } else { // 'water quality'
@@ -129,7 +125,7 @@ class AnalysisResultCard extends ConsumerWidget {
     Widget content;
     String type = result['type'];
 
-    if (type == 'fish' || type == 'molluscs') {
+    if (type == 'fish_hematology' || type == 'mollusc_hemocyte') {
       content = _SpeciesResultView(result: result, onDeletePressed: () { _showDeleteDialog(context, result, ref); });
     } else { // 'water_quality'
       content = _WaterQualityView(result: result, onDeletePressed: () { _showDeleteDialog(context, result, ref); });
@@ -137,7 +133,7 @@ class AnalysisResultCard extends ConsumerWidget {
 
     return GestureDetector(
         onTap: () {
-          _navigateToResultDetail(context, result);
+          _navigateToResultDetail(ref, context, result);
         },
         child: Container(
           margin: const EdgeInsets.only(left: 20, right: 20, top: 15),
@@ -153,14 +149,18 @@ class AnalysisResultCard extends ConsumerWidget {
 
 }
 
-class _SpeciesResultView extends StatelessWidget {
+class _SpeciesResultView extends ConsumerWidget {
   final Map<String, dynamic> result;
   final VoidCallback onDeletePressed;
 
   const _SpeciesResultView({super.key, required this.result, required this.onDeletePressed});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String speciesId = result['species_id'];
+    final imageUrlAsync = ref.watch(imageUrlProvider(result['image_url'] ?? ''));
+    final speciesAsync = ref.watch(speciesDetailsProvider(speciesId));
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -173,46 +173,45 @@ class _SpeciesResultView extends StatelessWidget {
               ),
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
               margin: const EdgeInsets.only(right: 15),
-              child: Image.network(result['image_url'],
-                  width: MediaQuery.of(context).size.width * 0.3),
+              child: imageUrlAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => const Center(child: Icon(Icons.error)),
+                  data: (url) {
+                    return Container(
+                      child: Image.network(url, width: 100.w),
+                    );
+                  }
+              )
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(result['name'],
-                      style: GoogleFonts.poppins(
-                          color: Colors.blue,
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w500
-                      )),
-                  Text(result['latin_name'],
-                      style: GoogleFonts.poppins(
-                          color: Colors.grey,
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500
-                      )),
-                ],
-              ),
-            )
+            speciesAsync.when(
+              loading: () => const Text("Memuat nama...", style: TextStyle(fontWeight: FontWeight.bold)),
+              error: (e, s) => const Text("Spesies tidak ditemukan", style: TextStyle(color: Colors.red)),
+              data: (species) => Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(species.name,
+                        style: GoogleFonts.poppins(
+                            color: Colors.blue,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w500
+                        )),
+                    Text(species.latin_name,
+                        style: GoogleFonts.poppins(
+                            color: Colors.grey,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500
+                        )),
+                  ],
+                ),
+              )
+            ),
           ],
         ),
-        SizedBox(height: 25.h),
+        SizedBox(height: 15.h),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Row(
-              children: [
-                Icon(Icons.location_on, color: Colors.blue, size: 30.r),
-                const SizedBox(width: 4),
-                Text("Stasiun ${result['station']}",
-                    style: GoogleFonts.poppins(
-                        color: Colors.grey,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500
-                    )),
-              ],
-            ),
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFFF4FBFF),

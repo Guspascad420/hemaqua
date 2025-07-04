@@ -2,43 +2,35 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hematologi/models/species.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DatabaseService {
   final _db = FirebaseFirestore.instance;
 
-  Stream<List<Species>> retrieveFishes() {
-    return _db
+  Stream<List<Species>> retrieveSpecieses(String type) {
+    final querySnapshotStream = _db
         .collection('specieses')
-        .where('type', isEqualTo: 'fish')
-        .snapshots()
-        .switchMap((querySnapshot) {
+        .where('type', isEqualTo: type)
+        .snapshots();
 
-      if (querySnapshot.docs.isEmpty) {
-        return Stream.value([]);
+    return querySnapshotStream.map((snapshot) {
+      if (snapshot.docs.isEmpty) {
+        return [];
       }
-
-      final docs = querySnapshot.docs;
-
-      List<Future<Species>> speciesFutures = docs.map((doc) async {
-        Species species = Species.fromSnapshot(doc);
-
-        try {
-          final downloadUrl = await FirebaseStorage.instance
-              .ref('fishes/${species.image_url}.png') // `species.imageUrl` disini masih nama file
-              .getDownloadURL();
-
-          return species.copyWith(imageUrl: downloadUrl);
-        } catch (e) {
-          final defaultUrl = await FirebaseStorage.instance
-              .ref('fishes/default/food.png')
-              .getDownloadURL();
-          return species.copyWith(imageUrl: defaultUrl);
-        }
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return Species.fromMap(data);
       }).toList();
-      return Future.wait(speciesFutures).asStream();
     });
+  }
+
+  Query retrieveCalculationHistory(String userId) {
+    return _db.collection('hasil_pantauan')
+        .where('user_id', isEqualTo: userId)
+        .orderBy('created_at', descending: true);
   }
 
   Future<String> uploadProfilePicture({required File file, required String uid}) async {
@@ -59,11 +51,57 @@ class DatabaseService {
     await _db.collection('specieses').add(species);
   }
 
+  Future<Species> retrieveSpeciesDetails(String speciesId) async {
+    final doc = await _db.collection('specieses').doc(speciesId).get();
+    if (!doc.exists) {
+      throw Exception('Spesies dengan ID $speciesId tidak ditemukan');
+    }
+    final data = doc.data()!;
+    data['id'] = doc.id;
+    return Species.fromMap(data);
+  }
+
   Stream<DocumentSnapshot<Map<String, dynamic>>> getUserDocStream(String uid) {
     return _db
         .collection('users')
         .doc(uid)
         .snapshots();
+  }
+
+  Future<void> seedMolluscsData() async {
+    final collectionRef = _db.collection('specieses');
+    List<Map<String, dynamic>> dummyMolluscs = [
+      {
+        'name': 'Keong Batu / Keong Geris',
+        'latin_name': 'Mieniplotia scabra',
+        'description': 'Siput air tawar yang sering menempel di bebatuan sungai jernih. Pola cangkangnya yang unik sering dipelajari dalam kaitannya dengan kandungan mineral air.',
+        'class': 'Gastropoda',
+        'type': 'mollusc',
+      },
+      {
+        'name': 'Tutut / Keong Sawah',
+        'latin_name': 'Filopaludina javanica',
+        'description': 'Siput air tawar ikonik yang umum dijumpai di persawahan dan perairan tenang di Asia Tenggara. Merupakan bagian penting dari ekosistem dan sering dikonsumsi.',
+        'class': 'Gastropoda',
+        'type': 'mollusc',
+      },
+      {
+        'name': 'Keong Terompet Merah',
+        'latin_name': 'Melanoides tuberculata',
+        'description': 'Dikenal sebagai Red-rimmed melania, siput ini dapat berkembang biak dengan cepat. Merupakan inang perantara penting bagi berbagai parasit, membuatnya signifikan dalam studi kesehatan ekologi.',
+        'class': 'Gastropoda',
+        'type': 'mollusc',
+      }
+    ];
+
+    debugPrint('Memulai proses seeding data moluska...');
+
+    for (final fishData in dummyMolluscs) {
+      await collectionRef.add(fishData);
+      debugPrint('Berhasil menambahkan: ${fishData['name']}');
+    }
+
+    debugPrint('Proses seeding selesai!');
   }
 
   Future<void> seedFishesData() async {
@@ -122,14 +160,14 @@ class DatabaseService {
       },
     ];
 
-    print('Memulai proses seeding data ikan...');
+    debugPrint('Memulai proses seeding data ikan...');
 
     for (final fishData in dummyFishes) {
       await collectionRef.add(fishData);
       print('Berhasil menambahkan: ${fishData['name']}');
     }
 
-    print('Proses seeding selesai!');
+    debugPrint('Proses seeding selesai!');
   }
 
   Future<void> updateUserProfile(String uid, Map<String, dynamic> dataToUpdate) async {
@@ -140,13 +178,14 @@ class DatabaseService {
     // await _db.collection('users').doc(uid).update({
     //   'calculation_results' : FieldValue.arrayUnion([result])
     // });
-    await _db.collection('calculation_results').add(result);
+    await _db.collection('hasil_pantauan').add(result);
   }
 
-  void removeCalculationResult(Map<String, dynamic> result, String uid) async {
-    await _db.collection('users').doc(uid).update({
-      'calculation_results' : FieldValue.arrayRemove([result])
-    });
+  void removeCalculationResult(String resultId) async {
+    // await _db.collection('users').doc(uid).update({
+    //   'calculation_results' : FieldValue.arrayRemove([result])
+    // });
+    await _db.collection('hasil_pantauan').doc(resultId).delete();
   }
 
   void addSpeciesToFavorite(Species species, String uid) async {
@@ -188,36 +227,6 @@ class DatabaseService {
 
   void createNewUser(Map<String, dynamic> user, String uid) async {
     await _db.collection("users").doc(uid).set(user);
-  }
-
-  Stream<List<Species>> retrieveMolluscs() {
-    return _db
-        .collection('specieses')
-        .where('type', isEqualTo: 'molluscs')
-        .snapshots()
-        .switchMap((querySnapshot) {
-
-      if (querySnapshot.docs.isEmpty) {
-        return Stream.value([]);
-      }
-
-      final docs = querySnapshot.docs;
-
-      List<Future<Species>> speciesFutures = docs.map((doc) async {
-        Species species = Species.fromSnapshot(doc);
-
-        try {
-          final downloadUrl = await FirebaseStorage.instance
-              .ref('molluscs/${species.image_url}.png') // `species.imageUrl` disini masih nama file
-              .getDownloadURL();
-
-          return species.copyWith(imageUrl: downloadUrl);
-        } catch (e) {
-          return species.copyWith(imageUrl: 'URL_GAMBAR_DEFAULT_JIKA_ERROR');
-        }
-      }).toList();
-      return Future.wait(speciesFutures).asStream();
-    });
   }
 
   Future<List<Map<String, dynamic>>> retrieveBloods() async {

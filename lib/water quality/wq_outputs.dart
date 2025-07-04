@@ -73,9 +73,10 @@ class _WaterQualityOutputsState extends State<WaterQualityOutputs> {
                         "pollution_index": widget.wqi,
                         "station": widget.station,
                         "date": formattedDate,
-                        "type": "water quality"
+                        "type": "water quality",
+                        "user_id": auth.currentUser!.uid
                       };
-                      service.addCalculationResult(calculationResult, auth.currentUser!.uid);
+                      service.addCalculationResult(calculationResult);
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => const DataSaved())
                       );
