@@ -233,9 +233,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   var user = {
                                     'username': _usernameTextController.text,
                                     'email': _emailTextController.text,
-                                    'hematologi_species_in_cart': [],
-                                    'hemosit_species_in_cart': [],
-                                    'calculation_results': []
+                                    'favorite_species': []
                                   };
                                   service.createNewUser(user, auth.currentUser!.uid);
                                   setState(() {
