@@ -56,10 +56,10 @@ class _HemositParametersState extends State<HemositParameters> {
         bottomNavigationBar: GestureDetector(
             onTap: () {
               Map<String, double> calculationResults = {
-                'THC': thc,
-                'Hyalin': hyalin,
-                'Granular': granular,
-                'Semi Granular': semiGranular,
+                'thc': thc,
+                'hyalin': hyalin,
+                'granular': granular,
+                'semi_granular': semiGranular,
               };
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => HemositResults(calculationResults: calculationResults,

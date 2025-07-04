@@ -397,7 +397,8 @@ class _ReusableAddSpeciesUIState extends State<ReusableAddSpeciesUI> {
                                     )),
                                 child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 50),
+                                        vertical: 15, horizontal: 50
+                                    ),
                                     child: _isUploading
                                         ? const CircularProgressIndicator(
                                         color: Colors.white)

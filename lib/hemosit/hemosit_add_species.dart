@@ -48,7 +48,7 @@ class HemositAddSpecies extends StatelessWidget {
         body: Stack(
           children: [
             Container(height: double.infinity, color: Colors.red,),
-            ReusableAddSpeciesUI(station: station, type: "molluscs")
+            ReusableAddSpeciesUI(station: station, type: "mollusc")
           ],
         )
     );
