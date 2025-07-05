@@ -28,7 +28,7 @@ class HomePage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4FBFF),
-      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 0, user: userDataMap),
+      bottomNavigationBar: BottomNavBar(context: context, currentIndex: 0),
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
