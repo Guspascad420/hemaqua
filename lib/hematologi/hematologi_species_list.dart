@@ -9,6 +9,7 @@ import '../models/species.dart';
 import 'package:collection/collection.dart';
 
 import '../provider/providers.dart';
+import '../species/species_details.dart';
 
 class HematologiSpeciesList extends ConsumerWidget {
   final int station;
@@ -75,8 +76,16 @@ class HematologiSpeciesList extends ConsumerWidget {
                   gap: 20,
                   children: [
                     for(var fish in fishes)
-                      speciesCard2(ref, context, fish, station,
-                          favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => SpeciesDetails(species: fish,
+                                  station: station, isFavoriteSpecies: favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), fish.toMap())) ? true : false,
+                                  showBottomNav: true))
+                          );
+                        },
+                        child: speciesCard2(ref, context, fish)
+                      )
                   ]
               )
           );

@@ -8,6 +8,7 @@ import 'package:hematologi/static_grid.dart';
 import '../cards/species_card2.dart';
 import '../models/species.dart';
 import '../provider/providers.dart';
+import '../species/species_details.dart';
 
 
 class HemositSpeciesList extends ConsumerWidget {
@@ -75,8 +76,19 @@ class HemositSpeciesList extends ConsumerWidget {
                   gap: 20,
                   children: [
                     for(var mollusc in molluscs)
-                      speciesCard2(ref, context, mollusc, station,
-                          favoriteSpeciesList.any((e) => const MapEquality().equals(e.toMap(), mollusc.toMap())) ? true : false),
+                      GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => SpeciesDetails(species: mollusc,
+                                    station: station,
+                                    isFavoriteSpecies: favoriteSpeciesList.any((e) =>
+                                        const MapEquality().equals(e.toMap(), mollusc.toMap()))
+                                        ? true : false,
+                                    showBottomNav: true))
+                            );
+                          },
+                          child: speciesCard2(ref, context, mollusc)
+                      ),
                   ]
               )
           );

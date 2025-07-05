@@ -6,27 +6,18 @@ import 'package:hematologi/species/species_details.dart';
 
 import '../provider/providers.dart';
 
-Widget speciesCard2(WidgetRef ref, BuildContext context, Species species, int station, bool isFavoriteFish) {
+Widget speciesCard2(WidgetRef ref, BuildContext context, Species species) {
   final imageUrlAsync = ref.watch(imageUrlProvider(species.image_url ?? ''));
-  // debugPrint(species.toMap().toString());
-  return GestureDetector(
-    onTap: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => SpeciesDetails(species: species,
-            station: station, isFavoriteSpecies: isFavoriteFish,
-            showBottomNav: true))
-      );
-    },
-    child: Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        color: Colors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
-          imageUrlAsync.when(
+  return Container(
+    decoration: const BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(20)),
+      color: Colors.white,
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        imageUrlAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (err, stack) => const Center(child: Icon(Icons.error)),
             data: (url) {
@@ -34,29 +25,28 @@ Widget speciesCard2(WidgetRef ref, BuildContext context, Species species, int st
                 child: Image.network(url, scale: 1.8),
               );
             }
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 15, left: 15, bottom: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(species.name,
+                  style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      color: const Color(0xFF3B82F6),
+                      fontWeight: FontWeight.w500
+                  )),
+              Text(species.latin_name,
+                  style: GoogleFonts.poppins(
+                      fontSize: 17,
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.w500
+                  ))
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 15, left: 15, bottom: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(species.name,
-                    style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        color: const Color(0xFF3B82F6),
-                        fontWeight: FontWeight.w500
-                    )),
-                Text(species.latin_name,
-                    style: GoogleFonts.poppins(
-                        fontSize: 17,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w500
-                    ))
-              ],
-            ),
-          )
-        ],
-      ),
-    )
+        )
+      ],
+    ),
   );
 }
