@@ -27,10 +27,24 @@ class DatabaseService {
     });
   }
 
+  Query retrieveAllSpecies() {
+    return _db.collection('specieses').orderBy('name');
+  }
+
   Query retrieveCalculationHistory(String userId) {
     return _db.collection('hasil_pantauan')
         .where('user_id', isEqualTo: userId)
         .orderBy('created_at', descending: true);
+  }
+
+  Future<int> getTotalAnalysisCount(String speciesId) async {
+    final query = _db
+        .collection('hasil_pantauan')
+        .where('species_id', isEqualTo: speciesId);
+
+    final aggregateQuery = await query.count().get();
+    final totalCount = aggregateQuery.count ?? 0;
+    return totalCount;
   }
 
   Future<String> uploadProfilePicture({required File file, required String uid}) async {

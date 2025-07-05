@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hematologi/hemosit/hemosit_parameters.dart';
 import 'package:hematologi/models/species.dart';
@@ -24,6 +25,7 @@ class SpeciesDetails extends ConsumerStatefulWidget {
 class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
 
   bool _isFavorite = false;
+  final List<String> dataTypes = [];
 
   void _showSnackBar(BuildContext context, String textContent, MaterialColor backgroundColor) {
     SnackBar snackBar = SnackBar(
@@ -208,7 +210,34 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                                     color: Colors.grey,
                                     fontSize: 15,
                                   )),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 15.h),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Total Analisis',
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.blue,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500
+                                      )),
+                                  Container(
+                                    margin: EdgeInsets.only(right: 15.w),
+                                    child: Text('0 Kali',
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 18,
+                                            color: Colors.grey
+                                        )),
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: 15.h),
+                              Text('Tren Parameter',
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.blue,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500
+                                  )),
+                              SizedBox(height: 25.h),
                             ],
                           ),
                         ),

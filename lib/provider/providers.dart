@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 // Import model dan service lo
 import '../database/database_service.dart';
 import '../models/species.dart';
@@ -14,6 +15,9 @@ final databaseServiceProvider = Provider<DatabaseService>((ref) {
 final authStateProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
 });
+
+final speciesTypeFilterProvider = StateProvider<String>((ref) => 'Semua');
+final speciesSearchQueryProvider = StateProvider<String>((ref) => '');
 
 final userDocStreamProvider = StreamProvider.autoDispose<DocumentSnapshot>((ref) {
   final db = ref.watch(databaseServiceProvider);
@@ -120,6 +124,32 @@ final favoriteSpeciesListProvider = Provider.autoDispose<List<Species>>((ref) {
 
 final speciesDetailsProvider = FutureProvider.autoDispose.family<Species, String>((ref, speciesId) async {
   return ref.read(databaseServiceProvider).retrieveSpeciesDetails(speciesId);
+});
+
+final filteredSpeciesProvider = FutureProvider.autoDispose<List<Species>>((ref) async {
+  final selectedType = ref.watch(speciesTypeFilterProvider);
+  final searchQuery = ref.watch(speciesSearchQueryProvider);
+
+  Query query = ref.read(databaseServiceProvider).retrieveAllSpecies();
+  if (selectedType != 'Semua') {
+    query = query.where('type', isEqualTo: selectedType);
+  }
+  if (searchQuery.isNotEmpty) {
+    query = query
+        .where('name', isGreaterThanOrEqualTo: searchQuery)
+        .where('name', isLessThanOrEqualTo: searchQuery);
+  }
+  final snapshot = await query.get();
+
+  return snapshot.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return Species.fromMap(data);
+  }).toList();
+});
+
+final totalAnalysisProvider = FutureProvider.autoDispose.family<int, String>((ref, speciesId) async {
+  return ref.read(databaseServiceProvider).getTotalAnalysisCount(speciesId);
 });
 
 final calculationResultsProvider = StreamProvider.autoDispose<List<Map<String, dynamic>>>((ref) {
