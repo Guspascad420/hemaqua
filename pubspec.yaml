@@ -52,6 +52,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   google_sign_in: ^6.3.0
   syncfusion_flutter_gauges: ^30.1.38
+  fl_chart: ^1.0.0
 
 
   collection: any

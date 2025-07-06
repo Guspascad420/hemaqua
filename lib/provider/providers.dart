@@ -122,6 +122,11 @@ final favoriteSpeciesListProvider = Provider.autoDispose<List<Species>>((ref) {
   return asyncValue.asData?.value ?? [];
 });
 
+final totalAnalysisCountProvider = FutureProvider.autoDispose.family<int, String>((ref, speciesId) async {
+  final asyncCount = await ref.read(databaseServiceProvider).getTotalAnalysisCount(speciesId);
+  return asyncCount;
+});
+
 final speciesDetailsProvider = FutureProvider.autoDispose.family<Species, String>((ref, speciesId) async {
   return ref.read(databaseServiceProvider).retrieveSpeciesDetails(speciesId);
 });

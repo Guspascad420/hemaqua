@@ -37,6 +37,21 @@ class DatabaseService {
         .orderBy('created_at', descending: true);
   }
 
+  Future<List<Map<String, dynamic>>> retrieveCalculationsbySpecies(String speciesId) async {
+    final snapshot = await _db
+        .collection('hasil_pantauan')
+        .where('species_id', isEqualTo: speciesId)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return data;
+    }).toList();
+  }
+
   Future<int> getTotalAnalysisCount(String speciesId) async {
     final query = _db
         .collection('hasil_pantauan')
@@ -44,6 +59,7 @@ class DatabaseService {
 
     final aggregateQuery = await query.count().get();
     final totalCount = aggregateQuery.count ?? 0;
+    debugPrint("aaahh $totalCount");
     return totalCount;
   }
 
