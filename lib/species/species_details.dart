@@ -78,7 +78,7 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
 
   Widget _mainContent(int totalAnalysisCount, WidgetRef ref) {
     final speciesCalculationsData = ref.watch(speciesCalculationDataProvider(widget.species.id!));
-    final groupingMode = ref.watch(groupingModeProvider);
+    // final groupingMode = ref.watch(groupingModeProvider);
     final totalAnalysisCount = ref.watch(totalAnalysisCountProvider(widget.species.id!));
     final selectedComponent = ref.watch(selectedComponentProvider(widget.species.type));
 
@@ -174,11 +174,14 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                   fontWeight: FontWeight.w500
               )),
           const SizedBox(height: 5),
-          Text(widget.species.description,
-              style: GoogleFonts.poppins(
-                color: Colors.grey,
-                fontSize: 15,
-              )),
+          Container(
+            margin: EdgeInsets.only(right: 15.w),
+            child: Text(widget.species.description,
+                style: GoogleFonts.poppins(
+                  color: Colors.grey,
+                  fontSize: 15,
+                ))
+          ),
           SizedBox(height: 15.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,7 +203,7 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
             ],
           ),
           SizedBox(height: 15.h),
-          Text('Tren Parameter',
+          Text('Tren Parameter (30 hari terakhir)',
               style: GoogleFonts.poppins(
                   color: Colors.blue,
                   fontSize: 18,
@@ -237,28 +240,28 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                 ),
               ),
-              Container(
-                  margin: EdgeInsets.only(right: 15.w),
-                  child: ToggleButtons(
-                    isSelected: [
-                      ref.watch(groupingModeProvider) == GroupingMode.daily,
-                      ref.watch(groupingModeProvider) == GroupingMode.weekly,
-                    ],
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    selectedColor: Colors.white,
-                    fillColor: Colors.blue[300],
-                    color: Colors.blue[500],
-                    constraints: BoxConstraints(minHeight: 40.h, minWidth: 60.w),
-                    onPressed: (index) {
-                      ref.read(groupingModeProvider.notifier).state =
-                      index == 0 ? GroupingMode.daily : GroupingMode.weekly;
-                    },
-                    children: [
-                      Text("1D", style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
-                      Text("1W", style: GoogleFonts.poppins(fontWeight: FontWeight.w500))
-                    ],
-                  )
-              ),
+              // Container(
+              //     margin: EdgeInsets.only(right: 15.w),
+              //     child: ToggleButtons(
+              //       isSelected: [
+              //         ref.watch(groupingModeProvider) == GroupingMode.daily,
+              //         ref.watch(groupingModeProvider) == GroupingMode.weekly,
+              //       ],
+              //       borderRadius: const BorderRadius.all(Radius.circular(12)),
+              //       selectedColor: Colors.white,
+              //       fillColor: Colors.blue[300],
+              //       color: Colors.blue[500],
+              //       constraints: BoxConstraints(minHeight: 40.h, minWidth: 60.w),
+              //       onPressed: (index) {
+              //         ref.read(groupingModeProvider.notifier).state =
+              //         index == 0 ? GroupingMode.daily : GroupingMode.weekly;
+              //       },
+              //       children: [
+              //         Text("1D", style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+              //         Text("1W", style: GoogleFonts.poppins(fontWeight: FontWeight.w500))
+              //       ],
+              //     )
+              // ),
             ],
           ),
           SizedBox(height: 20.h),
@@ -267,11 +270,9 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
               if (data.isEmpty) {
                 return Center(child: Text('no data'));
               }
-              debugPrint(data.toString());
-              final chartData = buildSpotsFromRaw(
+              final chartData = _buildSpotsFromRaw(
                 rawData: data,
                 selectedType: selectedComponent,
-                mode: ref.watch(groupingModeProvider),
               );
               return SizedBox(
                 height: 300.h,
@@ -292,15 +293,22 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             final index = value.toInt();
-                            final keys = chartData.spots.length;
-                            if (index >= 0 && index < keys) {
-                              final d = chartData.dates[index];
-                              return Text(groupingMode == GroupingMode.daily
-                                  ? '${d.day}/${d.month}'
-                                  : '${d.day}/${d.month}');
-                            }
-                            return const Text('');
+
+                            final isDataPoint = chartData.spots.any((spot) => spot.x == index.toDouble());
+
+                            if (!isDataPoint) return const SizedBox.shrink();
+
+                            final date = chartData.dates[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                '${date.day}/${date.month}',
+                                style: GoogleFonts.poppins(fontSize: 12),
+                              ),
+                            );
                           },
+                          reservedSize: 30,
+                          interval: 1,
                         ),
                       ),
                     ),
@@ -316,37 +324,40 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
     );
   }
 
-  ChartData buildSpotsFromRaw({
+  ChartData _buildSpotsFromRaw({
     required List<Map<String, dynamic>> rawData,
     required BloodComponent selectedType,
-    required GroupingMode mode,
   }) {
-    final grouped = <DateTime, List<double>>{};
+    final Map<DateTime, List<double>> grouped = {};
 
     for (final entry in rawData) {
       if (entry['created_at'] == null || entry[selectedType.name] == null) continue;
 
       final ts = entry['created_at'] as Timestamp;
       final rawDate = ts.toDate();
-      final normDate = mode == GroupingMode.daily
-          ? DateTime(rawDate.year, rawDate.month, rawDate.day)
-          : rawDate.subtract(Duration(days: rawDate.weekday - 1));
+      final dateOnly = DateTime(rawDate.year, rawDate.month, rawDate.day);
 
       final value = (entry[selectedType.name] ?? 0).toDouble();
 
       if (value == 0) continue;
 
-      grouped.putIfAbsent(normDate, () => []).add(value);
+      grouped.putIfAbsent(dateOnly, () => []).add(value);
     }
 
     final sortedDates = grouped.keys.toList()..sort();
-    final spots = List.generate(sortedDates.length, (i) {
-      final values = grouped[sortedDates[i]]!;
-      final avg = values.isNotEmpty
-          ? values.reduce((a, b) => a + b) / values.length
-          : 0.0;
-      return FlSpot(i.toDouble(), avg);
-    });
+    final List<FlSpot> spots = [];
+
+    for (int i = 0; i < sortedDates.length; i++) {
+      final date = sortedDates[i];
+      final values = grouped[date]!;
+
+      if (values.isEmpty) continue;
+
+      final avg = values.reduce((a, b) => a + b) / values.length;
+      debugPrint("$avg");
+      spots.add(FlSpot(i.toDouble(), avg));
+    }
+
     return ChartData(spots, sortedDates);
   }
 

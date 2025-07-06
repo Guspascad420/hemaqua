@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hematologi/models/species.dart';
-import 'package:rxdart/rxdart.dart';
 
 class DatabaseService {
   final _db = FirebaseFirestore.instance;
@@ -38,9 +37,14 @@ class DatabaseService {
   }
 
   Future<List<Map<String, dynamic>>> retrieveCalculationsbySpecies(String speciesId) async {
+    DateTime now = DateTime.now();
+    DateTime thirtyDaysAgo = DateTime(now.year, now.month, now.day) // Awal hari ini
+        .subtract(const Duration(days: 30));
+
     final snapshot = await _db
         .collection('hasil_pantauan')
         .where('species_id', isEqualTo: speciesId)
+        .where('created_at', isGreaterThanOrEqualTo: thirtyDaysAgo)
         .get();
 
     if (snapshot.docs.isEmpty) {
