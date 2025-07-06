@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hematologi/components/analysis/analysis_result_card.dart';
 import 'package:hematologi/hemosit/hemosit_parameters.dart';
 import 'package:hematologi/models/chart_data.dart';
 import 'package:hematologi/models/species.dart';
@@ -239,29 +240,7 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                 ),
-              ),
-              // Container(
-              //     margin: EdgeInsets.only(right: 15.w),
-              //     child: ToggleButtons(
-              //       isSelected: [
-              //         ref.watch(groupingModeProvider) == GroupingMode.daily,
-              //         ref.watch(groupingModeProvider) == GroupingMode.weekly,
-              //       ],
-              //       borderRadius: const BorderRadius.all(Radius.circular(12)),
-              //       selectedColor: Colors.white,
-              //       fillColor: Colors.blue[300],
-              //       color: Colors.blue[500],
-              //       constraints: BoxConstraints(minHeight: 40.h, minWidth: 60.w),
-              //       onPressed: (index) {
-              //         ref.read(groupingModeProvider.notifier).state =
-              //         index == 0 ? GroupingMode.daily : GroupingMode.weekly;
-              //       },
-              //       children: [
-              //         Text("1D", style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
-              //         Text("1W", style: GoogleFonts.poppins(fontWeight: FontWeight.w500))
-              //       ],
-              //     )
-              // ),
+              )
             ],
           ),
           SizedBox(height: 20.h),
@@ -274,46 +253,85 @@ class _SpeciesDetailsState extends ConsumerState<SpeciesDetails> {
                 rawData: data,
                 selectedType: selectedComponent,
               );
-              return SizedBox(
-                height: 300.h,
-                child: LineChart(
-                  LineChartData(
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: chartData.spots,
-                        isCurved: true,
-                        color: Colors.teal,
-                        dotData: const FlDotData(show: true),
-                        barWidth: 3,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                      height: 300.h,
+                      child: LineChart(
+                        LineChartData(
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: chartData.spots,
+                              isCurved: true,
+                              color: Colors.teal,
+                              dotData: const FlDotData(show: true),
+                              barWidth: 3,
+                            )
+                          ],
+                          titlesData: FlTitlesData(
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  final index = value.toInt();
+
+                                  final isDataPoint = chartData.spots.any((spot) => spot.x == index.toDouble());
+
+                                  if (!isDataPoint) return const SizedBox.shrink();
+
+                                  final date = chartData.dates[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      '${date.day}/${date.month}',
+                                      style: GoogleFonts.poppins(fontSize: 12),
+                                    ),
+                                  );
+                                },
+                                reservedSize: 30,
+                                interval: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                  ),
+                  SizedBox(height: 20.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Riwayat Analisis',
+                          style: GoogleFonts.poppins(
+                              color: Colors.blue,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500
+                          )),
+                      Container(
+                        margin: EdgeInsets.only(right: 15.w),
+                        child: TextButton(
+                            onPressed: () {
+
+                            },
+                            child: Text('Lihat semua',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16.sp,
+                                  color: Colors.grey,
+                                ))
+                        ),
                       )
                     ],
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            final index = value.toInt();
-
-                            final isDataPoint = chartData.spots.any((spot) => spot.x == index.toDouble());
-
-                            if (!isDataPoint) return const SizedBox.shrink();
-
-                            final date = chartData.dates[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                '${date.day}/${date.month}',
-                                style: GoogleFonts.poppins(fontSize: 12),
-                              ),
-                            );
-                          },
-                          reservedSize: 30,
-                          interval: 1,
-                        ),
-                      ),
-                    ),
                   ),
-                )
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: data.length > 3 ? 3 : data.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final result = data[index];
+                      return AnalysisResultCard(result: result, style: ResultCardStyle.compact);
+                    }),
+                  SizedBox(height: 25.h)
+                ],
               );
             },
             error: (err, stack) => const Center(child: Icon(Icons.error)),

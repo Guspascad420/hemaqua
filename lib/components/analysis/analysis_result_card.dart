@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../hematologi/hematologi_results.dart';
 import '../../hemosit/hemosit_results.dart';
@@ -10,10 +12,16 @@ import '../../provider/providers.dart';
 import '../../water quality/wq_calculation.dart';
 import '../../water quality/wq_outputs.dart';
 
+enum ResultCardStyle {
+  full,
+  compact,
+}
+
 class AnalysisResultCard extends ConsumerWidget {
   final Map<String, dynamic> result;
+  final ResultCardStyle style;
 
-  const AnalysisResultCard({super.key, required this.result});
+  const AnalysisResultCard({super.key, required this.result, this.style = ResultCardStyle.full});
 
   void _showDeleteDialog(BuildContext context, Map<String, dynamic> speciesData, WidgetRef ref) async {
     final uid = ref.read(authStateProvider).asData?.value?.uid;
@@ -126,7 +134,7 @@ class AnalysisResultCard extends ConsumerWidget {
     String type = result['type'];
 
     if (type == 'fish_hematology' || type == 'mollusc_hemocyte') {
-      content = _SpeciesResultView(result: result, onDeletePressed: () { _showDeleteDialog(context, result, ref); });
+      content = _SpeciesResultView(result: result, onDeletePressed: () { _showDeleteDialog(context, result, ref); }, style: style);
     } else { // 'water_quality'
       content = _WaterQualityView(result: result, onDeletePressed: () { _showDeleteDialog(context, result, ref); });
     }
@@ -136,10 +144,11 @@ class AnalysisResultCard extends ConsumerWidget {
           _navigateToResultDetail(ref, context, result);
         },
         child: Container(
-          margin: const EdgeInsets.only(left: 20, right: 20, top: 15),
+          margin: EdgeInsets.only(left: style == ResultCardStyle.compact ? 0 : 20, right: 20, top: 15),
           padding: const EdgeInsets.all(20),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            border: style == ResultCardStyle.compact ? Border.all(width: 1.5, color: Colors.blue) : null,
             color: Colors.white,
           ),
           child: content,
@@ -152,8 +161,18 @@ class AnalysisResultCard extends ConsumerWidget {
 class _SpeciesResultView extends ConsumerWidget {
   final Map<String, dynamic> result;
   final VoidCallback onDeletePressed;
+  final ResultCardStyle style;
 
-  const _SpeciesResultView({super.key, required this.result, required this.onDeletePressed});
+  const _SpeciesResultView({super.key, required this.result, required this.onDeletePressed, required this.style});
+
+  String formatTimestamp(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+    DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm');
+
+    String formattedDate = formatter.format(dateTime);
+
+    return formattedDate;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -164,50 +183,49 @@ class _SpeciesResultView extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                  color: Color(0xFFF4FBFF),
-                  borderRadius: BorderRadius.all(Radius.circular(20))
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-              margin: const EdgeInsets.only(right: 15),
-              child: imageUrlAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (err, stack) => const Center(child: Icon(Icons.error)),
-                  data: (url) {
-                    return Container(
-                      child: Image.network(url, width: 100.w),
-                    );
-                  }
-              )
-            ),
-            speciesAsync.when(
+        if (style == ResultCardStyle.full)
+          speciesAsync.when(
               loading: () => const Text("Memuat nama...", style: TextStyle(fontWeight: FontWeight.bold)),
               error: (e, s) => const Text("Spesies tidak ditemukan", style: TextStyle(color: Colors.red)),
-              data: (species) => Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(species.name,
-                        style: GoogleFonts.poppins(
-                            color: Colors.blue,
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w500
-                        )),
-                    Text(species.latin_name,
-                        style: GoogleFonts.poppins(
-                            color: Colors.grey,
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500
-                        )),
-                  ],
-                ),
+              data: (species) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(species.name,
+                      style: GoogleFonts.poppins(
+                          color: Colors.blue,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w500
+                      )),
+                  Text(species.latin_name,
+                      style: GoogleFonts.poppins(
+                          color: Colors.grey,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500
+                      )),
+                ],
               )
-            ),
-          ],
-        ),
+          ),
+        SizedBox(height: 5.h),
+        if (style == ResultCardStyle.compact)
+          Row(
+            children: [
+              Icon(Icons.location_on, color: Colors.blue, size: 30.r),
+              const SizedBox(width: 4),
+              Text(result['station_id'],
+                  style: GoogleFonts.poppins(
+                      color: Colors.grey,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500
+                  )),
+            ],
+          ),
+        SizedBox(height: 5.h),
+        Text(formatTimestamp(result['created_at']),
+            style: GoogleFonts.poppins(
+                color: Colors.grey,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500
+            )),
         SizedBox(height: 15.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
